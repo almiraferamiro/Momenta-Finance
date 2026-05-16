@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Momenta Finance">
+<meta name="theme-color" content="#0e0f14">
+<title>Momenta Finance</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+:root{--bg:#0e0f14;--bg2:#12141a;--card:#1a1c24;--card2:#20222c;--text:#e8eaf0;--text2:#b0b4c8;--text3:#50546a;--line:rgba(255,255,255,0.07);--line2:rgba(255,255,255,0.04);--sage:#7aaa5c;--sage-b:#95b880;--sage-dim:rgba(149,184,128,0.3);--sage-glow:rgba(149,184,128,0.08);--green:#5cb87a;--red:#d96060;--orange:#d4843a;--yellow:#d4a435;--blue:#5898c8;--purple:#8878c8}
+[data-theme="light"]{--bg:#f0f2f8;--bg2:#e8eaf0;--card:#ffffff;--card2:#f5f6fa;--text:#1a1c24;--text2:#40445a;--text3:#90949a;--line:rgba(0,0,0,0.08);--line2:rgba(0,0,0,0.04)}
+body{background:var(--bg);color:var(--text);font-family:"Plus Jakarta Sans",sans-serif;min-height:100vh;overflow:hidden}
+.app{max-width:430px;margin:0 auto;height:100vh;display:flex;flex-direction:column;position:relative;overflow:hidden}
+.screen{position:absolute;inset:0;display:none;flex-direction:column;background:var(--bg)}
+.screen.active{display:flex}
+.bnav{display:flex;background:var(--card);border-top:1px solid var(--line);padding:6px 0 max(6px,env(safe-area-inset-bottom));flex-shrink:0;z-index:10}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 2px;background:none;border:none;cursor:pointer;position:relative}
+.ni-icon{font-size:18px;line-height:1}
+.ni-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);transition:color .2s}
+.ni-dot{width:4px;height:4px;border-radius:50%;background:transparent;margin-top:1px}
+.ni.on .ni-lbl{color:var(--sage-b)}
+.ni.on .ni-dot{background:var(--sage-b)}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 8px;flex-shrink:0}
+.t-brand{font-family:"Barlow Condensed",sans-serif;font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.5px}
+.t-sub{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3)}
+.icon-btn{width:36px;height:36px;border-radius:50%;background:var(--card);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px}
+.scroll{flex:1;overflow-y:auto;padding:12px 16px;-webkit-overflow-scrolling:touch}
+.scroll::-webkit-scrollbar{display:none}
+.list-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 8px;flex-shrink:0}
+.lh-title{font-family:"Barlow Condensed",sans-serif;font-size:22px;font-weight:800;color:var(--text)}
+.lh-sub{font-size:9px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:1px}
+.lh-btn{padding:6px 12px;background:var(--sage-glow);border:1px solid var(--sage-dim);border-radius:8px;color:var(--sage-b);font-size:10px;font-weight:700;cursor:pointer;font-family:"Barlow Condensed",sans-serif;letter-spacing:.5px}
+.sec{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin:14px 0 7px;padding-bottom:5px;border-bottom:1px solid var(--line)}
+.sb{height:env(safe-area-inset-top,0px);min-height:8px;flex-shrink:0}
+.hero{background:var(--card);border-radius:16px;padding:16px;margin-bottom:10px}
+.hero-net{font-family:"Barlow Condensed",sans-serif;font-size:42px;font-weight:800;color:var(--text);line-height:1;margin-bottom:4px}
+.hero-runway{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.runway-lbl{font-size:9px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.runway-val{font-family:"Barlow Condensed",sans-serif;font-size:20px;font-weight:700;color:var(--yellow)}
+.qlog{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.qlog-btn{padding:13px;border-radius:12px;border:none;font-family:"Barlow Condensed",sans-serif;font-size:16px;font-weight:700;letter-spacing:.5px;cursor:pointer}
+.qlog-inc{background:rgba(92,184,122,0.15);color:var(--green);border:1.5px solid rgba(92,184,122,0.25)}
+.qlog-exp{background:rgba(217,96,96,0.12);color:var(--red);border:1.5px solid rgba(217,96,96,0.2)}
+.debt-cat{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:7px}
+.debt-cat.red{color:var(--red)}.debt-cat.orange{color:var(--orange)}.debt-cat.blue{color:var(--blue)}
+.debt-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.dc-wrap{display:flex;flex-direction:column}
+.dc{border-radius:12px;padding:12px;cursor:pointer;position:relative;overflow:hidden}
+.dc-shara{background:linear-gradient(135deg,#2a1010,#3a1818)}
+.dc-almira{background:linear-gradient(135deg,#1a1025,#2a1840)}
+.dc-shared{background:linear-gradient(135deg,#1a1408,#2a2010)}
+.dc-joyce{background:linear-gradient(135deg,#0e1a2a,#162438)}
+.dc-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.dc-tag{font-size:7px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.06);padding:2px 6px;border-radius:3px}
+.dc-arrow{font-size:8px;color:rgba(255,255,255,0.2);transition:transform .3s}
+.dc-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:rgba(255,255,255,0.4);margin-bottom:4px}
+.dc-amount{font-family:"Barlow Condensed",sans-serif;font-size:20px;font-weight:700;color:rgba(255,255,255,0.85);line-height:1;margin-bottom:3px}
+.dc-recent{font-size:8px;color:rgba(255,255,255,0.3);margin-bottom:6px}
+.dc-log-btn{padding:5px 8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;font-size:8px;font-weight:700;color:rgba(255,255,255,0.5);cursor:pointer;text-align:center;font-family:"Barlow Condensed",sans-serif;letter-spacing:.5px}
+.dc-expand{display:none;background:var(--card2);border-radius:0 0 12px 12px;padding:10px 12px}
+.dc-expand.open{display:block}
+.dtx{display:flex;align-items:flex-start;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--line2)}
+.dtx-l .dtx-desc{font-size:10px;color:var(--text);font-weight:500}
+.dtx-l .dtx-date{font-size:8px;color:var(--text3);margin-top:1px}
+.dtx-amt{font-family:"Barlow Condensed",sans-serif;font-size:13px;font-weight:700;flex-shrink:0;padding-left:8px}
+.dtx-amt.n{color:var(--red)}.dtx-amt.p{color:var(--green)}.dtx-amt.u{color:var(--text2)}
+.dtotal{display:flex;justify-content:space-between;padding:6px 0 0;margin-top:2px}
+.dtotal-l{font-size:10px;font-weight:700;color:var(--text2)}
+.dtotal-v{font-family:"Barlow Condensed",sans-serif;font-size:15px;font-weight:700}
+.dsub-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin:8px 0 4px}
+.acc-tag{border-radius:12px;padding:13px;min-height:120px;display:flex;flex-direction:column;justify-content:space-between}
+.acc-navy{background:linear-gradient(135deg,#1a2540,#243060)}
+.acc-teal{background:linear-gradient(135deg,#153028,#1e4038)}
+.acc-sky{background:linear-gradient(135deg,#152038,#1e3050)}
+.acc-olive{background:linear-gradient(135deg,#252818,#303820)}
+.acc-name{font-size:10px;font-weight:700;color:rgba(255,255,255,0.7);text-transform:uppercase;letter-spacing:.5px}
+.acc-type{font-size:8px;color:rgba(255,255,255,0.3)}
+.acc-bal{font-family:"Barlow Condensed",sans-serif;font-size:20px;font-weight:700;color:#fff}
+.acc-transfer{padding:3px 8px;background:rgba(255,255,255,0.12);border-radius:5px;font-size:7px;font-weight:700;color:rgba(255,255,255,0.7);cursor:pointer}
+.pool-card{background:var(--card);border-radius:10px;padding:12px;flex:1}
+.pool-name{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:4px}
+.pool-bal{font-family:"Barlow Condensed",sans-serif;font-size:18px;font-weight:700;line-height:1;margin-bottom:2px}
+.pool-earned-lbl{font-size:8px;color:var(--text3)}
+.pool-earned-val{font-size:9px;font-weight:700;color:var(--green)}
+.tab-dash{background:var(--card);border-radius:14px;padding:14px;margin-bottom:10px}
+.tab-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line)}
+.tkpi{background:var(--card);padding:10px 8px}
+.tkpi-l{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:4px}
+.tkpi-v{font-family:"Barlow Condensed",sans-serif;font-size:20px;font-weight:700;line-height:1}
+.tkpi-v.i{color:var(--sage-b)}.tkpi-v.e{color:var(--red)}.tkpi-v.n{color:var(--text)}
+.tab-quick{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.tq-btn{padding:10px;border-radius:10px;border:none;font-family:"Barlow Condensed",sans-serif;font-size:14px;font-weight:700;letter-spacing:.5px;cursor:pointer}
+.tq-inc{background:rgba(92,184,122,0.15);color:var(--green);border:1.5px solid rgba(92,184,122,0.25)}
+.tq-exp{background:rgba(217,96,96,0.12);color:var(--red);border:1.5px solid rgba(217,96,96,0.2)}
+.pcard{background:var(--card);border-radius:12px;margin-bottom:8px;overflow:hidden}
+.pcard-hdr{padding:12px 14px;display:flex;align-items:flex-start;justify-content:space-between;cursor:pointer}
+.pcard-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px}
+.pcard-tag{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);background:var(--card2);padding:2px 6px;border-radius:3px;display:inline-block}
+.pcard-net{font-family:"Barlow Condensed",sans-serif;font-size:16px;font-weight:700}
+.pcard-net.pos{color:var(--sage-b)}.pcard-net.neg{color:var(--red)}
+.pcard-body{display:none;padding:0 14px 12px}
+.pcard-body.open{display:block}
+.svc-card{border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px;position:relative;overflow:hidden}
+.svc-name{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
+.svc-amt{font-family:"Barlow Condensed",sans-serif;font-size:22px;font-weight:700;line-height:1}
+.svc-log{width:100%;padding:5px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:"Barlow Condensed",sans-serif;letter-spacing:.5px;border:1px solid}
+.tx-item{display:flex;align-items:flex-start;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line2)}
+.tx-ico{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-right:10px}
+.tx-ico.inc{background:rgba(92,184,122,0.15);color:var(--green)}
+.tx-ico.exp{background:rgba(217,96,96,0.1);color:var(--red)}
+.tx-ico.trf{background:rgba(88,152,200,0.12);color:var(--blue)}
+.tx-desc{font-size:11px;font-weight:600;color:var(--text);margin-bottom:2px}
+.tx-meta{font-size:9px;color:var(--text3)}
+.tx-amt{font-family:"Barlow Condensed",sans-serif;font-size:15px;font-weight:700;flex-shrink:0}
+.tx-amt.pos{color:var(--green)}.tx-amt.neg{color:var(--red)}.tx-amt.neu{color:var(--text2)}
+.filter-chip{padding:5px 12px;border-radius:20px;font-size:10px;font-weight:700;cursor:pointer;background:var(--card);border:1px solid var(--line);color:var(--text3);white-space:nowrap;transition:all .15s;flex-shrink:0}
+.filter-chip.on{background:var(--sage-glow);border-color:var(--sage-dim);color:var(--sage-b)}
+.stmt-doc{background:var(--card);border-radius:14px;padding:16px;margin-bottom:12px}
+.stmt-hd{text-align:center;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.stmt-co{font-family:"Barlow Condensed",sans-serif;font-size:18px;font-weight:800;letter-spacing:.5px;color:var(--text)}
+.stmt-dt{font-size:10px;font-weight:600;color:var(--text3);margin-top:2px;text-transform:uppercase;letter-spacing:.5px}
+.stmt-pd{font-size:11px;color:var(--sage-b);font-weight:600;margin-top:4px}
+.stmt-sec-t{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin:12px 0 6px}
+.stmt-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--line2)}
+.stmt-rn{font-size:11px;color:var(--text2)}
+.stmt-rn.ind{padding-left:12px;font-size:10px;color:var(--text3)}
+.stmt-rv{font-family:"Barlow Condensed",sans-serif;font-size:14px;font-weight:700}
+.stmt-rv.pos{color:var(--green)}.stmt-rv.neg{color:var(--red)}
+.stmt-tot{display:flex;justify-content:space-between;align-items:center;padding:8px 0;margin-top:4px;border-top:2px solid var(--line)}
+.stmt-tot-l{font-size:12px;font-weight:700;color:var(--text)}
+.stmt-tot-v{font-family:"Barlow Condensed",sans-serif;font-size:18px;font-weight:700}
+.stmt-tot-v.pos{color:var(--sage-b)}.stmt-tot-v.neg{color:var(--red)}
+.dp-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.dp-wrap{background:var(--card);border-radius:10px;padding:10px 12px}
+.dp-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:4px}
+.dp-input{background:none;border:none;font-family:"Barlow Condensed",sans-serif;font-size:16px;font-weight:700;color:var(--text);outline:none;width:100%}
+.gen-btn{width:100%;padding:13px;background:var(--sage);border:none;border-radius:10px;color:#fff;font-family:"Barlow Condensed",sans-serif;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:14px}
+.entry-overlay{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;justify-content:flex-end;background:rgba(0,0,0,0);pointer-events:none;transition:background .3s}
+.entry-overlay.open{background:rgba(0,0,0,0.6);pointer-events:all}
+.entry-sheet{background:var(--bg2);border-radius:24px 24px 0 0;padding:0;max-height:90vh;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .4s cubic-bezier(.16,1,.3,1)}
+.entry-overlay.open .entry-sheet{transform:translateY(0)}
+.es-handle{width:36px;height:4px;border-radius:2px;background:var(--text3);margin:12px auto 0;flex-shrink:0}
+.es-top{display:flex;align-items:center;justify-content:space-between;padding:14px 20px 10px;flex-shrink:0}
+.es-title{font-family:"Barlow Condensed",sans-serif;font-size:20px;font-weight:700;color:var(--text)}
+.es-close{width:30px;height:30px;border-radius:50%;background:var(--card);border:none;cursor:pointer;font-size:14px;color:var(--text2)}
+.es-progress{display:flex;gap:4px;padding:0 20px 12px;flex-shrink:0}
+.es-prog-dot{height:3px;flex:1;border-radius:2px;background:var(--line)}
+.es-prog-dot.done{background:var(--sage)}.es-prog-dot.active{background:var(--sage-b)}
+.es-q{font-family:"Barlow Condensed",sans-serif;font-size:26px;font-weight:800;color:var(--text);padding:0 20px 14px;line-height:1.2;flex-shrink:0}
+.es-q em{color:var(--sage-b);font-style:normal}
+.es-body{flex:1;overflow-y:auto;padding:0 20px;-webkit-overflow-scrolling:touch}
+.es-footer{padding:14px 20px max(14px,env(safe-area-inset-bottom));flex-shrink:0}
+.nxt-btn{width:100%;padding:15px;background:var(--sage);border:none;border-radius:14px;font-family:"Barlow Condensed",sans-serif;font-size:17px;font-weight:700;color:#fff;cursor:pointer;opacity:.35;transition:opacity .2s}
+.nxt-btn.active{opacity:1}
+.awrap{background:var(--card);border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.peso{font-family:"Barlow Condensed",sans-serif;font-size:28px;font-weight:700;color:var(--text3)}
+.ainput{flex:1;background:none;border:none;font-family:"Barlow Condensed",sans-serif;font-size:40px;font-weight:700;color:var(--text);outline:none;width:100%}
+.olist{display:flex;flex-direction:column;gap:6px}
+.obtn{display:flex;align-items:center;justify-content:space-between;padding:12px 13px;background:var(--card2);border-radius:10px;border:1.5px solid var(--line);cursor:pointer;transition:all .15s;width:100%;text-align:left}
+.obtn.sel{background:var(--sage-glow);border-color:var(--sage-dim)}
+.oleft{display:flex;align-items:center;gap:10px}
+.oico{width:32px;height:32px;border-radius:8px;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--text2);flex-shrink:0}
+.olbl{font-size:12px;font-weight:700;color:var(--text)}
+.osub{font-size:9px;color:var(--text3);margin-top:2px}
+.ochk{font-size:14px;color:transparent;transition:color .15s}
+.obtn.sel .ochk{color:var(--sage-b)}
+.twrap{background:var(--card);border-radius:12px;padding:14px 16px;margin-bottom:10px}
+.tinput{width:100%;background:none;border:none;font-family:"Plus Jakarta Sans",sans-serif;font-size:16px;font-weight:600;color:var(--text);outline:none}
+.date-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.date-wrap{background:var(--card);border-radius:10px;padding:10px 12px}
+.date-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:4px}
+.date-input{background:none;border:none;font-family:"Barlow Condensed",sans-serif;font-size:15px;font-weight:700;color:var(--text);outline:none;width:100%}
+.set-sec{background:var(--card);border-radius:14px;padding:14px 16px;margin-bottom:10px}
+.set-sec-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.set-sub{font-size:10px;font-weight:700;color:var(--sage-b);margin:10px 0 6px;text-transform:uppercase;letter-spacing:.5px}
+.set-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line2)}
+.set-row:last-child{border-bottom:none}
+.set-lbl{font-size:11px;color:var(--text2);font-weight:500;flex:1;padding-right:8px}
+.set-val-wrap{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.set-peso{font-family:"Barlow Condensed",sans-serif;font-size:14px;color:var(--text3);font-weight:600}
+.set-input{background:none;border:none;font-family:"Barlow Condensed",sans-serif;font-size:16px;font-weight:700;color:var(--sage-b);text-align:right;width:120px;outline:none}
+.set-input::placeholder{color:var(--text3);font-size:12px}
+.confirm-overlay{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;padding:20px}
+.confirm-overlay.open{display:flex}
+.confirm-box{background:var(--card);border-radius:20px;padding:24px;width:100%;max-width:340px}
+.confirm-title{font-family:"Barlow Condensed",sans-serif;font-size:20px;font-weight:700;color:var(--text);margin-bottom:8px}
+.confirm-msg{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:20px;white-space:pre-line}
+.confirm-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.confirm-no{padding:12px;background:var(--card2);border:1px solid var(--line);border-radius:10px;font-size:13px;font-weight:700;color:var(--text2);cursor:pointer}
+.confirm-yes{padding:12px;background:var(--red);border:none;border-radius:10px;font-size:13px;font-weight:700;color:#fff;cursor:pointer}
+.login-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;background:var(--bg);padding:40px 20px}
+.login-logo{font-family:"Barlow Condensed",sans-serif;font-size:52px;font-weight:800;color:var(--text);text-align:center;line-height:1;margin-bottom:6px}
+.login-sub{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:40px}
+.ubtn{display:flex;align-items:center;gap:16px;background:var(--card);border-radius:16px;padding:18px 20px;cursor:pointer;transition:background .15s;width:100%;max-width:340px;margin-bottom:10px;border:1.5px solid var(--line)}
+.ubtn:active{background:var(--card2)}
+.uav{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:"Barlow Condensed",sans-serif;font-size:20px;font-weight:800;color:#fff;flex-shrink:0}
+.uav.a{background:linear-gradient(135deg,#c05050,#a03030)}
+.uav.j{background:linear-gradient(135deg,#5070c0,#304090)}
+.uname{font-size:16px;font-weight:700;color:var(--text)}
+.urole{font-size:10px;color:var(--text3);margin-top:2px}
+.offline-banner{background:var(--orange);padding:6px 16px;font-size:10px;font-weight:700;color:#fff;text-align:center;display:none;flex-shrink:0}
+.offline-banner.show{display:block}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+<!-- LOGIN -->
+<div class="login-screen" id="login-screen">
+  <div class="login-logo">Momenta<br>Finance</div>
+  <div class="login-sub">Finance OS</div>
+  <div style="font-size:13px;font-weight:600;color:var(--text3);margin-bottom:14px">Sino ka ngayon?</div>
+  <div class="ubtn" onclick="selectUser('Almira','A','a','Co-Owner')">
+    <div class="uav a">A</div>
+    <div><div class="uname">Almira</div><div class="urole">Co-Owner · Creative</div></div>
+  </div>
+  <div class="ubtn" onclick="selectUser('Joyce','J','j','Co-Owner')">
+    <div class="uav j">J</div>
+    <div><div class="uname">Joyce</div><div class="urole">Co-Owner · Operations</div></div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="main-app" style="display:none;flex-direction:column;height:100vh;overflow:hidden">
+<div class="offline-banner" id="offline-banner">Offline — entries queued</div>
+
+<!-- HOME -->
+<div class="screen active" id="screen-home">
+  <div class="sb"></div>
+  <div class="topbar">
+    <div><div class="t-brand">Momenta</div><div class="t-sub">Finance OS</div></div>
+    <div style="display:flex;gap:8px">
+      <button class="icon-btn" id="theme-btn" onclick="toggleTheme()">🌙</button>
+      <button class="icon-btn" onclick="switchUser()" id="user-badge" style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700">A</button>
+    </div>
+  </div>
+  <div class="scroll">
+    <div class="hero">
+      <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin-bottom:4px">Total Cash</div>
+      <div class="hero-net" id="hero-net">₱0</div>
+      <div style="font-size:10px;color:var(--text3)" id="hero-sub">Update balances in Settings</div>
+      <div class="hero-runway">
+        <div><div class="runway-lbl">Cash Runway</div><div style="font-size:9px;color:var(--text3)">Based on ₱72k/mo burn</div></div>
+        <div class="runway-val" id="runway-val">—</div>
+      </div>
+    </div>
+    <div class="qlog">
+      <button class="qlog-btn qlog-inc" onclick="openEntry('income','General')">+ Income</button>
+      <button class="qlog-btn qlog-exp" onclick="openEntry('expense','General')">− Expense</button>
+    </div>
+    <div class="sec">Standing Debts</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">
+      <div class="debt-cat red" style="margin-bottom:0">Business Obligations</div>
+      <div style="display:flex;gap:5px">
+        <button onclick="openDeleteLoanPicker()" style="padding:4px 9px;background:rgba(217,96,96,0.08);border:1px solid rgba(217,96,96,0.2);border-radius:6px;color:rgba(217,96,96,0.7);font-size:9px;font-weight:700;cursor:pointer">Delete</button>
+        <button onclick="openAddLoan()" style="padding:4px 9px;background:rgba(217,96,96,0.12);border:1px solid rgba(217,96,96,0.3);border-radius:6px;color:var(--red);font-size:9px;font-weight:700;cursor:pointer">+ Add</button>
+      </div>
+    </div>
+    <div class="debt-grid-2" id="biz-obligations-grid">
+      <div class="dc-wrap">
+        <div class="dc dc-shara" onclick="toggleDebt(this)">
+          <div class="dc-hdr"><div class="dc-tag">LOAN</div><div class="dc-arrow">▼</div></div>
+          <div class="dc-lbl">Loan to Shara</div>
+          <div class="dc-amount" id="shara-amt">₱550,000</div>
+          <div class="dc-recent">Last: Tuition payment</div>
+          <div class="dc-log-btn" onclick="event.stopPropagation();openSharaPayment()">Log Payment →</div>
+        </div>
+        <div class="dc-expand" id="shara-history"></div>
+      </div>
+      <div class="dc-wrap">
+        <div class="dc dc-almira" onclick="toggleDebt(this)">
+          <div class="dc-hdr"><div class="dc-tag">Owes to Almira</div><div class="dc-arrow">▼</div></div>
+          <div class="dc-lbl">Draws</div>
+          <div class="dc-amount" id="almira-biz-amt">₱321,458</div>
+          <div class="dc-recent">Last: March 2026 Split</div>
+          <div class="dc-log-btn" onclick="event.stopPropagation();openContextEntry('almira-draw')">Log Draw →</div>
+        </div>
+        <div class="dc-expand" id="almira-draw-history"></div>
+      </div>
+    </div>
+    <div id="custom-loans"></div>
+    <div class="debt-cat orange">Owner Draws</div>
+    <div class="debt-grid-2">
+      <div class="dc-wrap">
+        <div class="dc dc-shared" onclick="toggleDebt(this)">
+          <div class="dc-hdr"><div class="dc-tag">Shared</div><div class="dc-arrow">▼</div></div>
+          <div class="dc-lbl">Shared Expense</div>
+          <div class="dc-amount" id="shared-amt">₱197,262</div>
+          <div class="dc-recent">Both owners 50/50</div>
+          <div class="dc-log-btn" onclick="event.stopPropagation();openContextEntry('shared-draw')">Log Draw →</div>
+        </div>
+        <div class="dc-expand" id="shared-history"></div>
+      </div>
+      <div></div>
+    </div>
+    <div class="debt-cat blue">Personal</div>
+    <div class="debt-grid-2">
+      <div class="dc-wrap">
+        <div class="dc dc-joyce" onclick="toggleDebt(this)">
+          <div class="dc-hdr"><div class="dc-tag">Joyce</div><div class="dc-arrow">▼</div></div>
+          <div class="dc-lbl">Utang sa Business</div>
+          <div class="dc-amount" id="joyce-biz-bal">₱175,087</div>
+          <div class="dc-recent">Last: Oct-Mar draws</div>
+          <div class="dc-log-btn" onclick="event.stopPropagation();openContextEntry('joyce-draw')" style="margin-bottom:4px">Log Draw →</div>
+          <div class="dc-lbl" style="margin-top:6px">Personal kay Almira</div>
+          <div class="dc-amount" id="joyce-personal-bal">₱25,600</div>
+        </div>
+        <div class="dc-expand" id="joyce-draw-history"></div>
+      </div>
+      <div class="dc-wrap">
+        <div class="dc dc-almira" onclick="toggleDebt(this)">
+          <div class="dc-hdr"><div class="dc-tag">Almira</div><div class="dc-arrow">▼</div></div>
+          <div class="dc-lbl">Personal Draws</div>
+          <div class="dc-amount" id="almira-personal-amt">₱0</div>
+          <div class="dc-recent">Net draws</div>
+          <div class="dc-log-btn" onclick="event.stopPropagation();openContextEntry('almira-draw')">Log Draw →</div>
+        </div>
+        <div class="dc-expand" id="almira-history"></div>
+      </div>
+    </div>
+    <div class="sec">Accounts</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+      <div class="acc-tag acc-navy" style="display:flex;flex-direction:column;justify-content:space-between">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between"><div><div class="acc-name">BDO Business</div><div class="acc-type">Checking</div></div><div class="acc-transfer" onclick="openTransfer('BDO Business')">Transfer</div></div>
+        <div><div class="acc-bal" id="bal-bdo">₱0</div>
+          <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:5px;margin-top:5px;display:flex;flex-direction:column;gap:2px">
+            <div style="display:flex;justify-content:space-between;font-size:8px"><span style="color:rgba(255,255,255,0.35)">School</span><span style="color:rgba(255,255,255,0.65);font-family:'Barlow Condensed',sans-serif;font-weight:600" id="bdo-school">—</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:8px"><span style="color:rgba(255,255,255,0.35)">Studio</span><span style="color:rgba(255,255,255,0.65);font-family:'Barlow Condensed',sans-serif;font-weight:600" id="bdo-studio">—</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:8px"><span style="color:rgba(255,255,255,0.35)">Events</span><span style="color:rgba(255,255,255,0.65);font-family:'Barlow Condensed',sans-serif;font-weight:600" id="bdo-events">—</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:8px"><span style="color:rgba(255,255,255,0.25)">General</span><span style="color:rgba(255,255,255,0.45);font-family:'Barlow Condensed',sans-serif;font-weight:600" id="bdo-general">—</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="acc-tag acc-teal" style="display:flex;flex-direction:column;justify-content:space-between">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between"><div><div class="acc-name">GCash Almira</div><div class="acc-type">Wallet</div></div><div class="acc-transfer" onclick="openTransfer('GCash Almira')">Transfer</div></div>
+        <div><div class="acc-bal" id="bal-gcash-a">₱0</div>
+          <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:5px;margin-top:5px;display:flex;flex-direction:column;gap:2px">
+            <div style="display:flex;justify-content:space-between;font-size:8px"><span style="color:rgba(255,255,255,0.35)">School</span><span style="color:rgba(255,255,255,0.65);font-family:'Barlow Condensed',sans-serif;font-weight:600" id="gcasha-school">—</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:8px"><span style="color:rgba(255,255,255,0.35)">Studio</span><span style="color:rgba(255,255,255,0.65);font-family:'Barlow Condensed',sans-serif;font-weight:600" id="gcasha-studio">—</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:8px"><span style="color:rgba(255,255,255,0.35)">Events</span><span style="color:rgba(255,255,255,0.65);font-family:'Barlow Condensed',sans-serif;font-weight:600" id="gcasha-events">—</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:8px"><span style="color:rgba(255,255,255,0.25)">General</span><span style="color:rgba(255,255,255,0.45);font-family:'Barlow Condensed',sans-serif;font-weight:600" id="gcasha-general">—</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="acc-tag acc-sky" style="display:flex;flex-direction:column;justify-content:space-between">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between"><div><div class="acc-name">GCash Joyce</div><div class="acc-type">Wallet</div></div><div class="acc-transfer" onclick="openTransfer('GCash Joyce')">Transfer</div></div>
+        <div><div class="acc-bal" id="bal-gcash-j">₱0</div>
+          <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:5px;margin-top:5px;display:flex;flex-direction:column;gap:2px">
+            <div style="display:flex;justify-content:space-between;font-size:8px"><span style="color:rgba(255,255,255,0.35)">School</span><span style="color:rgba(255,255,255,0.65);font-family:'Barlow Condensed',sans-serif;font-weight:600" id="gcashj-school">—</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:8px"><span style="color:rgba(255,255,255,0.35)">Studio</span><span style="color:rgba(255,255,255,0.65);font-family:'Barlow Condensed',sans-serif;font-weight:600" id="gcashj-studio">—</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:8px"><span style="color:rgba(255,255,255,0.35)">Events</span><span style="color:rgba(255,255,255,0.65);font-family:'Barlow Condensed',sans-serif;font-weight:600" id="gcashj-events">—</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:8px"><span style="color:rgba(255,255,255,0.25)">General</span><span style="color:rgba(255,255,255,0.45);font-family:'Barlow Condensed',sans-serif;font-weight:600" id="gcashj-general">—</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="acc-tag acc-olive" style="display:flex;flex-direction:column;justify-content:space-between">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between"><div><div class="acc-name">Cash</div><div class="acc-type">On Hand</div></div><div class="acc-transfer" onclick="openTransfer('Cash')">Transfer</div></div>
+        <div><div class="acc-bal" id="bal-cash">₱0</div>
+          <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:5px;margin-top:5px;display:flex;flex-direction:column;gap:2px">
+            <div style="display:flex;justify-content:space-between;font-size:8px"><span style="color:rgba(255,255,255,0.35)">School</span><span style="color:rgba(255,255,255,0.65);font-family:'Barlow Condensed',sans-serif;font-weight:600" id="cash-school">—</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:8px"><span style="color:rgba(255,255,255,0.35)">Studio</span><span style="color:rgba(255,255,255,0.65);font-family:'Barlow Condensed',sans-serif;font-weight:600" id="cash-studio">—</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:8px"><span style="color:rgba(255,255,255,0.35)">Events</span><span style="color:rgba(255,255,255,0.65);font-family:'Barlow Condensed',sans-serif;font-weight:600" id="cash-events">—</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:8px"><span style="color:rgba(255,255,255,0.25)">General</span><span style="color:rgba(255,255,255,0.45);font-family:'Barlow Condensed',sans-serif;font-weight:600" id="cash-general">—</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sec">Studio Cash Box</div>
+    <div style="margin-bottom:12px">
+      <div style="background:linear-gradient(135deg,#0e2030,#162840);border-radius:14px;padding:14px;border:1px solid rgba(88,152,200,0.2);cursor:pointer" onclick="toggleCashBox(this)" id="cashbox-card">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between">
+          <div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:rgba(88,152,200,0.7)">Studio Cash Box</div><div style="font-size:9px;color:rgba(255,255,255,0.3);margin-top:2px">Pera nasa studio pa</div></div>
+          <div style="display:flex;align-items:center;gap:8px"><div style="font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700;color:var(--blue)" id="cashbox-amt">₱0</div><div style="font-size:9px;color:rgba(88,152,200,0.5)" id="cashbox-arrow">▼</div></div>
+        </div>
+      </div>
+      <div id="cashbox-dropdown" style="background:var(--card);border-radius:0 0 12px 12px;max-height:0;overflow:hidden;transition:max-height .4s ease">
+        <div id="cashbox-entries" style="padding:12px 14px 4px"></div>
+        <div style="padding:0 14px 14px"><button onclick="openCashBoxTransfer()" style="width:100%;padding:8px;background:rgba(88,152,200,0.15);border:1.5px solid rgba(88,152,200,0.3);border-radius:8px;color:var(--blue);font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.5px;cursor:pointer">Ilipat sa Account</button></div>
+      </div>
+    </div>
+    <div class="sec">Pool Balances</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px">
+      <div class="pool-card" style="border-top:2px solid var(--sage)"><div class="pool-name">School</div><div class="pool-bal" id="pool-school-bal" style="color:var(--sage-b)">—</div><div class="pool-earned-lbl">Earned</div><div class="pool-earned-val" id="pool-school-earned">—</div></div>
+      <div class="pool-card" style="border-top:2px solid var(--blue)"><div class="pool-name">Studio</div><div class="pool-bal" id="pool-studio-bal" style="color:var(--blue)">—</div><div class="pool-earned-lbl">Earned</div><div class="pool-earned-val" id="pool-studio-earned">—</div></div>
+      <div class="pool-card" style="border-top:2px solid var(--purple)"><div class="pool-name">Events</div><div class="pool-bal" id="pool-events-bal" style="color:var(--purple)">—</div><div class="pool-earned-lbl">Earned</div><div class="pool-earned-val" id="pool-events-earned">—</div></div>
+    </div>
+    <div id="pool-transfer-history" style="margin-bottom:8px"></div>
+    <button onclick="openPoolTransfer()" style="width:100%;padding:10px;background:var(--sage-glow);border:1.5px dashed var(--sage-dim);border-radius:10px;color:var(--sage-b);font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.5px;cursor:pointer;margin-bottom:14px">Pool Transfer</button>
+    <div class="sec">Recent</div>
+    <div id="home-recent"></div>
+    <div style="height:20px"></div>
+  </div>
+  <div class="bnav">
+    <button class="ni on" onclick="switchNav(this,'screen-home',0)"><span class="ni-icon">⌂</span><span class="ni-lbl">Home</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-school',1)"><span class="ni-icon">🏫</span><span class="ni-lbl">School</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-studio',2)"><span class="ni-icon">🎬</span><span class="ni-lbl">Studio</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-events',3)"><span class="ni-icon">📷</span><span class="ni-lbl">Events</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-log',4)"><span class="ni-icon">📋</span><span class="ni-lbl">Log</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-statement',5)"><span class="ni-icon">📊</span><span class="ni-lbl">Report</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-settings',6)"><span class="ni-icon">⚙</span><span class="ni-lbl">Settings</span><div class="ni-dot"></div></button>
+  </div>
+</div>
+<!-- SCHOOL -->
+<div class="screen" id="screen-school">
+  <div class="sb"></div>
+  <div class="list-hdr"><div><div class="lh-title">School</div><div class="lh-sub">Partnership Projects</div></div><button class="lh-btn" onclick="openNewProject()">+ Project</button></div>
+  <div class="scroll" style="padding-top:0">
+    <div class="tab-dash">
+      <div class="tab-kpis">
+        <div class="tkpi"><div class="tkpi-l">Standing</div><div class="tkpi-v i" id="school-standing-lbl">—</div><div style="font-size:8px;color:var(--text3);margin-top:3px">Earned: <span id="school-earned-lbl" style="font-weight:600;color:var(--text2)">—</span></div></div>
+        <div class="tkpi"><div class="tkpi-l">Expense</div><div class="tkpi-v e" id="school-exp-lbl">—</div></div>
+        <div class="tkpi"><div class="tkpi-l">Net</div><div class="tkpi-v n" id="school-net-lbl">—</div></div>
+      </div>
+      <div class="tab-quick" style="margin-top:10px">
+        <button class="tq-btn tq-inc" onclick="openEntry('income','School')">+ Log Income</button>
+        <button class="tq-btn tq-exp" onclick="openEntry('expense','School')">− Log Expense</button>
+      </div>
+    </div>
+    <div class="sec">Projects</div>
+    <div id="school-list"></div>
+    <div style="height:20px"></div>
+  </div>
+  <div class="bnav">
+    <button class="ni" onclick="switchNav(this,'screen-home',0)"><span class="ni-icon">⌂</span><span class="ni-lbl">Home</span><div class="ni-dot"></div></button>
+    <button class="ni on" onclick="switchNav(this,'screen-school',1)"><span class="ni-icon">🏫</span><span class="ni-lbl">School</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-studio',2)"><span class="ni-icon">🎬</span><span class="ni-lbl">Studio</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-events',3)"><span class="ni-icon">📷</span><span class="ni-lbl">Events</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-log',4)"><span class="ni-icon">📋</span><span class="ni-lbl">Log</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-statement',5)"><span class="ni-icon">📊</span><span class="ni-lbl">Report</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-settings',6)"><span class="ni-icon">⚙</span><span class="ni-lbl">Settings</span><div class="ni-dot"></div></button>
+  </div>
+</div>
+
+<!-- STUDIO -->
+<div class="screen" id="screen-studio">
+  <div class="sb"></div>
+  <div class="list-hdr"><div><div class="lh-title">Studio</div><div class="lh-sub" id="studio-month-lbl">May 2026</div></div><div style="display:flex;gap:6px"><button class="lh-btn" onclick="changeMonth(-1)">←</button><button class="lh-btn" onclick="changeMonth(1)">→</button></div></div>
+  <div class="scroll" style="padding-top:0">
+    <div class="tab-dash">
+      <div class="tab-kpis">
+        <div class="tkpi"><div class="tkpi-l">Standing</div><div class="tkpi-v i" id="studio-standing">—</div><div style="font-size:8px;color:var(--text3);margin-top:3px">Earned: <span id="studio-inc" style="font-weight:600;color:var(--text2)">—</span></div></div>
+        <div class="tkpi"><div class="tkpi-l">Expense</div><div class="tkpi-v e" id="studio-exp">—</div></div>
+        <div class="tkpi"><div class="tkpi-l">Net</div><div class="tkpi-v n" id="studio-net">—</div></div>
+      </div>
+      <div style="margin-top:10px"><button class="tq-btn tq-exp" onclick="openEntry('expense','Studio')" style="width:100%">− Log Expense</button></div>
+    </div>
+    <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin:12px 0 7px">Income by Service</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px">
+      <div class="svc-card" style="background:linear-gradient(135deg,#0e2218,#142e20);border:1px solid rgba(92,184,122,0.15)"><div class="svc-name" style="color:rgba(92,184,122,0.5)">Self Shoot</div><div class="svc-amt" id="svc-self" style="color:var(--green)">—</div><button class="svc-log" onclick="studioLogService('Self Shoot')" style="background:rgba(92,184,122,0.12);border-color:rgba(92,184,122,0.25);color:var(--green)">+ Log</button></div>
+      <div class="svc-card" style="background:linear-gradient(135deg,#1a1a0e,#28260e);border:1px solid rgba(212,164,53,0.15)"><div class="svc-name" style="color:rgba(212,164,53,0.5)">Grad Shoot</div><div class="svc-amt" id="svc-grad" style="color:var(--yellow)">—</div><button class="svc-log" onclick="studioLogService('Grad Shoot')" style="background:rgba(212,164,53,0.12);border-color:rgba(212,164,53,0.25);color:var(--yellow)">+ Log</button></div>
+      <div class="svc-card" style="background:linear-gradient(135deg,#100e1e,#18142e);border:1px solid rgba(136,120,200,0.15)"><div class="svc-name" style="color:rgba(136,120,200,0.5)">Theme Shoot</div><div class="svc-amt" id="svc-theme" style="color:var(--purple)">—</div><button class="svc-log" onclick="studioLogService('Theme Shoot')" style="background:rgba(136,120,200,0.12);border-color:rgba(136,120,200,0.25);color:var(--purple)">+ Log</button></div>
+      <div class="svc-card" style="background:linear-gradient(135deg,#0e1820,#142030);border:1px solid rgba(88,152,200,0.15)"><div class="svc-name" style="color:rgba(88,152,200,0.5)">Quick Prints</div><div class="svc-amt" id="svc-prints" style="color:var(--blue)">—</div><button class="svc-log" onclick="studioLogService('Quick Prints')" style="background:rgba(88,152,200,0.12);border-color:rgba(88,152,200,0.25);color:var(--blue)">+ Log</button></div>
+    </div>
+    <div class="sec">This Month</div>
+    <div id="studio-entries"></div>
+    <div style="height:20px"></div>
+  </div>
+  <div class="bnav">
+    <button class="ni" onclick="switchNav(this,'screen-home',0)"><span class="ni-icon">⌂</span><span class="ni-lbl">Home</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-school',1)"><span class="ni-icon">🏫</span><span class="ni-lbl">School</span><div class="ni-dot"></div></button>
+    <button class="ni on" onclick="switchNav(this,'screen-studio',2)"><span class="ni-icon">🎬</span><span class="ni-lbl">Studio</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-events',3)"><span class="ni-icon">📷</span><span class="ni-lbl">Events</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-log',4)"><span class="ni-icon">📋</span><span class="ni-lbl">Log</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-statement',5)"><span class="ni-icon">📊</span><span class="ni-lbl">Report</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-settings',6)"><span class="ni-icon">⚙</span><span class="ni-lbl">Settings</span><div class="ni-dot"></div></button>
+  </div>
+</div>
+
+<!-- EVENTS -->
+<div class="screen" id="screen-events">
+  <div class="sb"></div>
+  <div class="list-hdr"><div><div class="lh-title">Events</div><div class="lh-sub">Coverage &amp; Weddings</div></div><button class="lh-btn" onclick="openNewEvent()">+ Event</button></div>
+  <div class="scroll" style="padding-top:0">
+    <div class="tab-dash">
+      <div class="tab-kpis">
+        <div class="tkpi"><div class="tkpi-l">Standing</div><div class="tkpi-v i" id="events-standing">—</div><div style="font-size:8px;color:var(--text3);margin-top:3px">Earned: <span id="events-earned" style="font-weight:600;color:var(--text2)">—</span></div></div>
+        <div class="tkpi"><div class="tkpi-l">Expense</div><div class="tkpi-v e" id="events-exp">—</div></div>
+        <div class="tkpi"><div class="tkpi-l">Net</div><div class="tkpi-v n" id="events-net">—</div></div>
+      </div>
+      <div class="tab-quick" style="margin-top:10px">
+        <button class="tq-btn tq-inc" onclick="openEntry('income','Events')">+ Log Income</button>
+        <button class="tq-btn tq-exp" onclick="openEntry('expense','Events')">− Log Expense</button>
+      </div>
+    </div>
+    <div class="sec">Event Projects</div>
+    <div id="events-list"></div>
+    <div style="height:20px"></div>
+  </div>
+  <div class="bnav">
+    <button class="ni" onclick="switchNav(this,'screen-home',0)"><span class="ni-icon">⌂</span><span class="ni-lbl">Home</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-school',1)"><span class="ni-icon">🏫</span><span class="ni-lbl">School</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-studio',2)"><span class="ni-icon">🎬</span><span class="ni-lbl">Studio</span><div class="ni-dot"></div></button>
+    <button class="ni on" onclick="switchNav(this,'screen-events',3)"><span class="ni-icon">📷</span><span class="ni-lbl">Events</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-log',4)"><span class="ni-icon">📋</span><span class="ni-lbl">Log</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-statement',5)"><span class="ni-icon">📊</span><span class="ni-lbl">Report</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-settings',6)"><span class="ni-icon">⚙</span><span class="ni-lbl">Settings</span><div class="ni-dot"></div></button>
+  </div>
+</div>
+
+<!-- LOG -->
+<div class="screen" id="screen-log">
+  <div class="sb"></div>
+  <div class="list-hdr"><div><div class="lh-title">Log</div><div class="lh-sub">All Transactions</div></div></div>
+  <div style="display:flex;gap:6px;padding:0 16px 10px;overflow-x:auto;flex-shrink:0">
+    <div class="filter-chip on" onclick="filterLog('All',this)">All</div>
+    <div class="filter-chip" onclick="filterLog('income',this)">Income</div>
+    <div class="filter-chip" onclick="filterLog('expense',this)">Expense</div>
+    <div class="filter-chip" onclick="filterLog('School',this)">School</div>
+    <div class="filter-chip" onclick="filterLog('Studio',this)">Studio</div>
+    <div class="filter-chip" onclick="filterLog('Events',this)">Events</div>
+    <div class="filter-chip" onclick="filterLog('transfer',this)">Transfer</div>
+  </div>
+  <div class="scroll" style="padding-top:0"><div id="log-list"></div><div style="height:20px"></div></div>
+  <div class="bnav">
+    <button class="ni" onclick="switchNav(this,'screen-home',0)"><span class="ni-icon">⌂</span><span class="ni-lbl">Home</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-school',1)"><span class="ni-icon">🏫</span><span class="ni-lbl">School</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-studio',2)"><span class="ni-icon">🎬</span><span class="ni-lbl">Studio</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-events',3)"><span class="ni-icon">📷</span><span class="ni-lbl">Events</span><div class="ni-dot"></div></button>
+    <button class="ni on" onclick="switchNav(this,'screen-log',4)"><span class="ni-icon">📋</span><span class="ni-lbl">Log</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-statement',5)"><span class="ni-icon">📊</span><span class="ni-lbl">Report</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-settings',6)"><span class="ni-icon">⚙</span><span class="ni-lbl">Settings</span><div class="ni-dot"></div></button>
+  </div>
+</div>
+<!-- REPORT -->
+<div class="screen" id="screen-statement">
+  <div class="sb"></div>
+  <div class="list-hdr"><div><div class="lh-title">Report</div><div class="lh-sub">Statements &amp; Records</div></div></div>
+  <div style="display:flex;gap:6px;padding:0 16px 10px;flex-shrink:0;overflow-x:auto">
+    <div class="filter-chip on" id="rtab-statement" onclick="switchReportTab('statement')">Financial</div>
+    <div class="filter-chip" id="rtab-owner" onclick="switchReportTab('owner')">Owner Statement</div>
+    <div class="filter-chip" id="rtab-loans" onclick="switchReportTab('loans')">Loan Records</div>
+  </div>
+  <div class="scroll" style="padding-top:0">
+    <div id="rsec-statement">
+      <div style="background:var(--card);border-radius:14px;padding:14px;margin-bottom:10px">
+        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:8px">Business Line</div>
+        <div class="olist">
+          <button class="obtn sel" id="stmt-line-all" onclick="setStmtLine('All',this)"><div class="oleft"><div class="oico">A</div><div><div class="olbl">All Business Lines</div></div></div><span class="ochk">✓</span></button>
+          <button class="obtn" onclick="setStmtLine('School',this)"><div class="oleft"><div class="oico">🏫</div><div><div class="olbl">School Partnership</div></div></div><span class="ochk">✓</span></button>
+          <button class="obtn" onclick="setStmtLine('Studio',this)"><div class="oleft"><div class="oico">🎬</div><div><div class="olbl">Studio</div></div></div><span class="ochk">✓</span></button>
+          <button class="obtn" onclick="setStmtLine('Events',this)"><div class="oleft"><div class="oico">📷</div><div><div class="olbl">Events</div></div></div><span class="ochk">✓</span></button>
+        </div>
+      </div>
+      <div class="dp-row">
+        <div class="dp-wrap"><div class="dp-lbl">From</div><input class="dp-input" type="date" id="date-from"></div>
+        <div class="dp-wrap"><div class="dp-lbl">To</div><input class="dp-input" type="date" id="date-to"></div>
+      </div>
+      <button class="gen-btn" onclick="generateStatement()">Generate Statement →</button>
+      <div class="stmt-doc">
+        <div class="stmt-hd"><div class="stmt-co">MOMENTA CINEMA</div><div class="stmt-dt" id="stmt-line-label">Financial Statement</div><div class="stmt-pd" id="stmt-period">Set date range above</div></div>
+        <div id="stmt-body"><div style="padding:16px;text-align:center;font-size:11px;color:var(--text3)">Tap Generate to compute</div></div>
+      </div>
+    </div>
+    <div id="rsec-owner" style="display:none">
+      <div style="background:var(--card);border-radius:14px;padding:16px;margin-bottom:12px">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:12px">Owner Statement</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+          <div id="owner-mode-auto" onclick="setOwnerMode('auto')" style="background:var(--sage-glow);border:2px solid var(--sage);border-radius:12px;padding:14px;cursor:pointer;text-align:center">
+            <div style="font-size:20px;margin-bottom:5px">⚡</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--sage-b)">Auto Generate</div>
+            <div style="font-size:8px;color:var(--text3);margin-top:2px">50/25/25 computed</div>
+          </div>
+          <div id="owner-mode-custom" onclick="setOwnerMode('custom')" style="background:var(--card2);border:2px solid var(--line);border-radius:12px;padding:14px;cursor:pointer;text-align:center">
+            <div style="font-size:20px;margin-bottom:5px">✏️</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--text)">Custom</div>
+            <div style="font-size:8px;color:var(--text3);margin-top:2px">Override net &amp; split</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+          <div class="dp-wrap"><div class="dp-lbl">From</div><input class="dp-input" type="date" id="owner-from"></div>
+          <div class="dp-wrap"><div class="dp-lbl">To</div><input class="dp-input" type="date" id="owner-to"></div>
+        </div>
+        <div id="owner-custom-inputs" style="display:none">
+          <div style="background:var(--card2);border-radius:10px;padding:12px 14px;margin-bottom:10px;border:1px solid var(--line)">
+            <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:6px">Net Income Override</div>
+            <div style="display:flex;align-items:center;gap:6px"><span style="font-family:'Barlow Condensed',sans-serif;font-size:20px;color:var(--text3)">₱</span><input id="owner-net-income" type="number" inputmode="decimal" placeholder="Auto-computed" style="flex:1;background:none;border:none;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--text);outline:none"></div>
+          </div>
+          <div style="background:var(--card2);border-radius:10px;padding:12px 14px;margin-bottom:10px;border:1px solid var(--line)">
+            <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:8px">Split Ratio</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+              <div><div style="font-size:8px;color:var(--text3);margin-bottom:4px">General %</div><input id="split-general-pct" type="number" placeholder="50" style="width:100%;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:7px 8px;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--text);outline:none"></div>
+              <div><div style="font-size:8px;color:var(--text3);margin-bottom:4px">Almira %</div><input id="split-almira-pct" type="number" placeholder="25" style="width:100%;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:7px 8px;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--text);outline:none"></div>
+              <div><div style="font-size:8px;color:var(--text3);margin-bottom:4px">Joyce %</div><input id="split-joyce-pct" type="number" placeholder="25" style="width:100%;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:7px 8px;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--text);outline:none"></div>
+            </div>
+          </div>
+        </div>
+        <button onclick="generateOwnerStatement()" style="width:100%;padding:13px;background:var(--sage);border:none;border-radius:10px;color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;cursor:pointer;margin-bottom:14px">Generate →</button>
+        <div id="owner-stmt-content"></div>
+      </div>
+    </div>
+    <div id="rsec-loans" style="display:none">
+      <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:8px">Settled Loan History</div>
+      <div id="loan-records-list"></div>
+    </div>
+  </div>
+  <div class="bnav">
+    <button class="ni" onclick="switchNav(this,'screen-home',0)"><span class="ni-icon">⌂</span><span class="ni-lbl">Home</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-school',1)"><span class="ni-icon">🏫</span><span class="ni-lbl">School</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-studio',2)"><span class="ni-icon">🎬</span><span class="ni-lbl">Studio</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-events',3)"><span class="ni-icon">📷</span><span class="ni-lbl">Events</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-log',4)"><span class="ni-icon">📋</span><span class="ni-lbl">Log</span><div class="ni-dot"></div></button>
+    <button class="ni on" onclick="switchNav(this,'screen-statement',5)"><span class="ni-icon">📊</span><span class="ni-lbl">Report</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-settings',6)"><span class="ni-icon">⚙</span><span class="ni-lbl">Settings</span><div class="ni-dot"></div></button>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div class="screen" id="screen-settings">
+  <div class="sb"></div>
+  <div class="list-hdr"><div><div class="lh-title">Settings</div><div class="lh-sub">Configure Starting Values</div></div><button class="icon-btn" id="theme-btn2" onclick="toggleTheme()">🌙</button></div>
+  <div class="scroll" style="padding-top:0">
+    <div class="set-sec">
+      <div class="set-sec-title">Account Balances</div>
+      <div class="set-row"><div class="set-lbl">BDO Business</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-bdo" type="number" placeholder="0" oninput="saveBalance('bdo',this.value)"></div></div>
+      <div class="set-row"><div class="set-lbl">GCash Almira</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-gcash-a" type="number" placeholder="0" oninput="saveBalance('gcashA',this.value)"></div></div>
+      <div class="set-row"><div class="set-lbl">GCash Joyce</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-gcash-j" type="number" placeholder="0" oninput="saveBalance('gcashJ',this.value)"></div></div>
+      <div class="set-row"><div class="set-lbl">Cash on Hand</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-cash" type="number" placeholder="0" oninput="saveBalance('cash',this.value)"></div></div>
+      <div class="set-row"><div class="set-lbl">Studio Cash Box</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-cashbox" type="number" placeholder="0" oninput="saveBalance('cashbox',this.value)"></div></div>
+    </div>
+    <div class="set-sec">
+      <div class="set-sec-title">Pool Starting Balances (Historical)</div>
+      <div style="font-size:9px;color:var(--text3);margin-bottom:10px;line-height:1.6">Historical income at expense para accurate ang pool standing computation.</div>
+      <div class="set-sub">School</div>
+      <div class="set-row"><div class="set-lbl">Total Income</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-school-income" type="number" placeholder="0" oninput="savePoolStart('school','income',this.value)"></div></div>
+      <div class="set-row"><div class="set-lbl">Total Expense</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-school-expense" type="number" placeholder="0" oninput="savePoolStart('school','expense',this.value)"></div></div>
+      <div class="set-sub">Studio</div>
+      <div class="set-row"><div class="set-lbl">Total Income</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-studio-income" type="number" placeholder="0" oninput="savePoolStart('studio','income',this.value)"></div></div>
+      <div class="set-row"><div class="set-lbl">Total Expense</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-studio-expense" type="number" placeholder="0" oninput="savePoolStart('studio','expense',this.value)"></div></div>
+      <div class="set-sub">Events</div>
+      <div class="set-row"><div class="set-lbl">Total Income</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-events-income" type="number" placeholder="0" oninput="savePoolStart('events','income',this.value)"></div></div>
+      <div class="set-row"><div class="set-lbl">Total Expense</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-events-expense" type="number" placeholder="0" oninput="savePoolStart('events','expense',this.value)"></div></div>
+      <div class="set-sub">General</div>
+      <div class="set-row"><div class="set-lbl">Total Income</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-general-income" type="number" placeholder="0" oninput="savePoolStart('general','income',this.value)"></div></div>
+      <div class="set-row"><div class="set-lbl">Total Expense</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-general-expense" type="number" placeholder="0" oninput="savePoolStart('general','expense',this.value)"></div></div>
+    </div>
+    <div class="set-sec">
+      <div class="set-sec-title">Standing Obligations</div>
+      <div class="set-sub">Business Loans</div>
+      <div class="set-row"><div class="set-lbl">Shara Loan (remaining)</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-shara" type="number" placeholder="550000" oninput="saveObligation('shara',this.value)"></div></div>
+      <div class="set-row"><div class="set-lbl">Business owes Almira</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-almira-owed" type="number" placeholder="321458" oninput="saveObligation('almiraOwed',this.value)"></div></div>
+      <div class="set-sub">Shared</div>
+      <div class="set-row"><div class="set-lbl">Shared Expense (total)</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-shared" type="number" placeholder="197262" oninput="saveObligation('shared',this.value)"></div></div>
+      <div class="set-sub">Personal</div>
+      <div class="set-row"><div class="set-lbl">Joyce owes Business</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-joyce-biz" type="number" placeholder="175087" oninput="saveObligation('joyceBiz',this.value)"></div></div>
+      <div class="set-row"><div class="set-lbl">Joyce owes Almira (personal)</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-joyce-almira" type="number" placeholder="25600" oninput="saveObligation('joyceAlmira',this.value)"></div></div>
+      <div class="set-row"><div class="set-lbl">Almira net draws</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-almira-draws" type="number" placeholder="0" oninput="saveObligation('almiraDraws',this.value)"></div></div>
+    </div>
+    <div class="set-sec">
+      <div class="set-sec-title">Owner Statement Default</div>
+      <div class="set-row"><div class="set-lbl">Net Income (override)</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-net-income" type="number" placeholder="Auto" oninput="saveObligation('netIncome',this.value)"></div></div>
+    </div>
+    <div class="set-sec">
+      <div class="set-sec-title">Google Sheet Connection</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><div id="sdot" style="width:8px;height:8px;border-radius:50%;background:var(--red)"></div><div id="sstat" style="font-size:11px;font-weight:600;color:var(--text3)">Not connected</div></div>
+      <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:6px">Paste Web App URL</div>
+      <textarea id="sheet-url-input" placeholder="https://script.google.com/macros/s/..." style="width:100%;background:var(--card2);border:1.5px solid var(--line);border-radius:10px;color:var(--text);font-size:11px;padding:10px 12px;outline:none;resize:none;height:70px;font-family:'Plus Jakarta Sans',sans-serif;line-height:1.5;margin-bottom:8px"></textarea>
+      <button onclick="connectSheetFromInput()" style="width:100%;padding:12px;background:var(--sage-glow);border:1.5px dashed var(--sage-dim);border-radius:10px;color:var(--sage-b);font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.5px;cursor:pointer">Connect Google Sheet</button>
+      <div id="sheet-status-msg" style="margin-top:8px;font-size:9px;color:var(--text3);line-height:1.7"></div>
+    </div>
+    <div class="set-sec">
+      <div class="set-sec-title">Current User</div>
+      <div class="set-row"><div class="set-lbl">Logged in as</div><div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--sage-b)" id="set-user-name">—</div></div>
+      <button onclick="switchUser()" style="width:100%;padding:11px;background:var(--card2);border:1px solid var(--line);border-radius:10px;color:var(--text2);font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px">Switch User</button>
+    </div>
+    <div style="height:30px"></div>
+  </div>
+  <div class="bnav">
+    <button class="ni" onclick="switchNav(this,'screen-home',0)"><span class="ni-icon">⌂</span><span class="ni-lbl">Home</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-school',1)"><span class="ni-icon">🏫</span><span class="ni-lbl">School</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-studio',2)"><span class="ni-icon">🎬</span><span class="ni-lbl">Studio</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-events',3)"><span class="ni-icon">📷</span><span class="ni-lbl">Events</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-log',4)"><span class="ni-icon">📋</span><span class="ni-lbl">Log</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-statement',5)"><span class="ni-icon">📊</span><span class="ni-lbl">Report</span><div class="ni-dot"></div></button>
+    <button class="ni on" onclick="switchNav(this,'screen-settings',6)"><span class="ni-icon">⚙</span><span class="ni-lbl">Settings</span><div class="ni-dot"></div></button>
+  </div>
+</div>
+
+</div><!-- /main-app -->
+
+<!-- ENTRY OVERLAY -->
+<div class="entry-overlay" id="entry-overlay">
+  <div class="entry-sheet">
+    <div class="es-handle"></div>
+    <div class="es-top"><div class="es-title" id="es-title">Log Entry</div><button class="es-close" onclick="closeEntry()">✕</button></div>
+    <div class="es-progress" id="es-progress"></div>
+    <div class="es-q" id="es-q"></div>
+    <div class="es-body" id="es-body"></div>
+    <div class="es-footer"><button class="nxt-btn" id="nxt-btn" onclick="nextStep()">Next →</button></div>
+  </div>
+</div>
+
+<!-- CONFIRM -->
+<div class="confirm-overlay" id="confirm-overlay">
+  <div class="confirm-box">
+    <div class="confirm-title" id="confirm-title"></div>
+    <div class="confirm-msg" id="confirm-msg"></div>
+    <div class="confirm-btns">
+      <button class="confirm-no" onclick="hideConfirm()">Cancel</button>
+      <button class="confirm-yes" id="confirm-yes" onclick="confirmAction()">Confirm</button>
+    </div>
+  </div>
+</div>
+<script>
+'use strict';
+const todayStr=()=>new Date().toISOString().split('T')[0];
+let user={name:'',key:'',initial:'',role:''};
+let masterLog=JSON.parse(localStorage.getItem('momenta_log')||'[]');
+let accountBalances=Object.assign({bdo:0,gcashA:0,gcashJ:0,cash:0,cashbox:0},JSON.parse(localStorage.getItem('momenta_balances')||'{}'));
+let obligations=Object.assign({shara:550000,almiraOwed:321458,shared:197262,joyceBiz:175087,joyceAlmira:25600,almiraDraws:0,netIncome:0},JSON.parse(localStorage.getItem('momenta_obligations')||'{}'));
+let poolStarts=JSON.parse(localStorage.getItem('momenta_pool_start')||'{}');
+let customLoans=JSON.parse(localStorage.getItem('momenta_loans')||'[]');
+let loanRecords=JSON.parse(localStorage.getItem('momenta_loan_records')||'[]');
+let offlineQueue=JSON.parse(localStorage.getItem('momenta_offline')||'[]');
+let sheetUrl=localStorage.getItem('momenta_sheet_url')||'';
+let sheetConnected=!!sheetUrl;
+let currentFlow=[];let flowStep=0;let entry={};let confirmCb=null;
+let studioMonth=new Date().getMonth();let studioYear=new Date().getFullYear();
+let stmtLine='All';let activeReportTab='statement';
+let schoolProjects=JSON.parse(localStorage.getItem('momenta_school')||'[]');
+let eventProjects=JSON.parse(localStorage.getItem('momenta_events')||'[]');
+
+function selectUser(name,initial,key,role){
+  user={name,initial,key,role};localStorage.setItem('momenta_user',JSON.stringify(user));
+  document.getElementById('login-screen').style.display='none';
+  const ma=document.getElementById('main-app');ma.style.display='flex';
+  const ub=document.getElementById('user-badge');if(ub)ub.textContent=initial;
+  initApp();
+}
+function switchUser(){document.getElementById('main-app').style.display='none';document.getElementById('login-screen').style.display='flex';}
+function toggleTheme(){const t=document.documentElement.getAttribute('data-theme')==='light'?'dark':'light';document.documentElement.setAttribute('data-theme',t);localStorage.setItem('momenta_theme',t);document.querySelectorAll('#theme-btn,#theme-btn2').forEach(b=>b.textContent=t==='light'?'☀':'🌙');}
+function switchNav(el,sid,idx){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(sid).classList.add('active');document.querySelectorAll('.bnav').forEach(nav=>nav.querySelectorAll('.ni').forEach((b,i)=>b.classList.toggle('on',i===idx)));if(sid==='screen-school'){renderSchoolDash();renderSchoolList();}if(sid==='screen-studio')renderStudioDash();if(sid==='screen-events'){renderEventsDash();renderEventsList();}if(sid==='screen-log')renderLogList();if(sid==='screen-statement')switchReportTab(activeReportTab);}
+function saveBalance(key,val){accountBalances[key]=parseFloat(val)||0;localStorage.setItem('momenta_balances',JSON.stringify(accountBalances));renderBalances();updateRunway();renderAccountPools();}
+function savePoolStart(pool,type,val){if(!poolStarts[pool])poolStarts[pool]={income:0,expense:0};poolStarts[pool][type]=parseFloat(val)||0;localStorage.setItem('momenta_pool_start',JSON.stringify(poolStarts));renderPoolStanding();}
+function saveObligation(key,val){obligations[key]=parseFloat(val)||0;localStorage.setItem('momenta_obligations',JSON.stringify(obligations));updateDebtCards();renderPoolStanding();}
+
+function renderBalances(){
+  const fmt=v=>'₱'+Math.round(v||0).toLocaleString();
+  const map={bdo:'bal-bdo',gcashA:'bal-gcash-a',gcashJ:'bal-gcash-j',cash:'bal-cash'};
+  Object.entries(map).forEach(([k,id])=>{const el=document.getElementById(id);if(el)el.textContent=fmt(accountBalances[k]||0);});
+  const total=(accountBalances.bdo||0)+(accountBalances.gcashA||0)+(accountBalances.gcashJ||0)+(accountBalances.cash||0);
+  const hn=document.getElementById('hero-net');if(hn)hn.textContent=fmt(total);
+  updateRunway();renderAccountPools();
+}
+function updateRunway(){const total=(accountBalances.bdo||0)+(accountBalances.gcashA||0)+(accountBalances.gcashJ||0)+(accountBalances.cash||0);const rv=document.getElementById('runway-val');if(rv)rv.textContent=total>0?'~'+Math.round(total/72000)+' months':'—';}
+function updateDebtCards(){const fmt=v=>'₱'+Math.round(v||0).toLocaleString();const fields={shara:['shara-amt',550000],almiraOwed:['almira-biz-amt',321458],shared:['shared-amt',197262],joyceBiz:['joyce-biz-bal',175087],joyceAlmira:['joyce-personal-bal',25600],almiraDraws:['almira-personal-amt',0]};Object.entries(fields).forEach(([key,[id,def]])=>{const el=document.getElementById(id);if(el)el.textContent=fmt(obligations[key]!==undefined?obligations[key]:def);});}
+
+function renderAccountPools(){
+  const pools=['School','Studio','Events','General'];
+  const accMap={'BDO Business':'bdo','GCash Almira':'gcasha','GCash Joyce':'gcashj','Cash':'cash'};
+  const ap={bdo:{},gcasha:{},gcashj:{},cash:{}};
+  pools.forEach(p=>Object.keys(ap).forEach(a=>ap[a][p]=0));
+  masterLog.forEach(t=>{const bl=t.bizLine||'General';const pool=pools.includes(bl)?bl:'General';const ak=accMap[t.acc];if(t.type==='income'&&t.acc!=='Studio Cash Box'){if(ak)ap[ak][pool]=(ap[ak][pool]||0)+t.amount;}else if(t.type==='expense'){if(ak)ap[ak][pool]=(ap[ak][pool]||0)-t.amount;}else if(t.type==='transfer'){const fk=accMap[t.fromAcc||t.acc];const tk=accMap[t.toAcc];if(fk)ap[fk][pool]=(ap[fk][pool]||0)-t.amount;if(tk)ap[tk][pool]=(ap[tk][pool]||0)+t.amount;}});
+  const fp=v=>{if(!v)return '—';const abs=Math.abs(v);return(v<0?'-':'')+(abs>=1000?'₱'+(abs/1000).toFixed(0)+'K':'₱'+abs.toLocaleString());};
+  Object.entries({bdo:'bdo',gcasha:'gcasha',gcashj:'gcashj',cash:'cash'}).forEach(([aid,ak])=>pools.forEach(pool=>{const el=document.getElementById(aid+'-'+pool.toLowerCase());if(el)el.textContent=fp(ap[ak][pool]||0);}));
+  const cbTxs=masterLog.filter(t=>t.type==='income'&&t.acc==='Studio Cash Box');
+  const cbTotal=cbTxs.reduce((s,t)=>s+t.amount,0)+(accountBalances.cashbox||0);
+  const ca=document.getElementById('cashbox-amt');if(ca)ca.textContent='₱'+Math.round(cbTotal).toLocaleString();
+  const ce=document.getElementById('cashbox-entries');if(ce)ce.innerHTML=cbTxs.length?cbTxs.map(t=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line2);font-size:9px"><span style="color:var(--text2)">${t.date} · ${t.service||t.cat||'Income'}</span><span style="color:var(--blue);font-family:'Barlow Condensed',sans-serif;font-weight:600">₱${t.amount.toLocaleString()}</span></div>`).join(''):'<div style="font-size:9px;color:var(--text3);padding:8px 0">Walang entries</div>';
+}
+
+function renderPoolStanding(){
+  const pools={School:{income:0,expense:0},Studio:{income:0,expense:0},Events:{income:0,expense:0}};
+  const transfers=[];
+  ['school','studio','events'].forEach(p=>{const P=p.charAt(0).toUpperCase()+p.slice(1);if(poolStarts[p]){pools[P].income+=(poolStarts[p].income||0);pools[P].expense+=(poolStarts[p].expense||0);}});
+  masterLog.forEach(t=>{if(pools[t.bizLine]){if(t.type==='income')pools[t.bizLine].income+=t.amount;else if(t.type==='expense')pools[t.bizLine].expense+=t.amount;}if(t.type==='pool-transfer')transfers.push(t);});
+  const fmt=v=>{const abs=Math.abs(Math.round(v));return abs>=1000?'₱'+(abs/1000).toFixed(0)+'K':'₱'+abs.toLocaleString();};
+  ['School','Studio','Events'].forEach(pool=>{const p=pools[pool];const standing=p.income-p.expense;const pos=standing>=0;const be=document.getElementById('pool-'+pool.toLowerCase()+'-bal');const ee=document.getElementById('pool-'+pool.toLowerCase()+'-earned');if(be){be.textContent=fmt(standing)+(standing<0?' (deficit)':'');be.style.color=pos?'var(--sage-b)':'var(--red)';}if(ee)ee.textContent=p.income>0?'₱'+Math.round(p.income).toLocaleString():'₱0';});
+  const he=document.getElementById('pool-transfer-history');
+  if(he&&transfers.length){he.innerHTML=`<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:6px">Transfer History</div>`+transfers.map(t=>`<div style="background:var(--card);border-radius:10px;padding:12px 13px;margin-bottom:5px"><div style="display:flex;align-items:flex-start;justify-content:space-between"><div><div style="font-size:11px;font-weight:600;color:var(--text)">${t.fromPool||'?'} → ${t.toPool||'?'}</div><div style="font-size:9px;color:var(--text3);margin-top:2px">${t.date} · ${t.acc||'—'}</div><div style="font-size:9px;color:var(--text2);font-style:italic">"${t.desc||'—'}"</div></div><div style="text-align:right"><div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--yellow)">₱${t.amount.toLocaleString()}</div><span style="font-size:8px;font-weight:700;padding:2px 7px;border-radius:4px;${!t.settled?'background:rgba(212,132,58,0.15);color:var(--orange)':'background:rgba(92,184,122,0.12);color:var(--green)'}">${!t.settled?'Outstanding':'Settled'}</span></div></div>${!t.settled?`<button onclick="settlePoolTransfer(${t.id})" style="width:100%;padding:6px;background:rgba(92,184,122,0.1);border:1px solid rgba(92,184,122,0.25);border-radius:7px;color:var(--green);font-size:10px;font-weight:700;cursor:pointer;margin-top:8px;font-family:'Barlow Condensed',sans-serif">Mark as Settled</button>`:''}</div>`).join('');}else if(he)he.innerHTML='';
+}
+function settlePoolTransfer(id){const tx=masterLog.find(t=>t.id===id);if(!tx)return;tx.settled=true;tx.settledDate=todayStr();localStorage.setItem('momenta_log',JSON.stringify(masterLog));renderPoolStanding();}
+function toggleDebt(card){const arrow=card.querySelector('.dc-arrow');const expand=card.nextElementSibling;if(!expand)return;const isOpen=expand.classList.toggle('open');if(arrow)arrow.style.transform=isOpen?'rotate(180deg)':'';}
+function toggleCashBox(card){const dd=document.getElementById('cashbox-dropdown');const arrow=document.getElementById('cashbox-arrow');const isOpen=dd.style.maxHeight&&dd.style.maxHeight!=='0px';dd.style.maxHeight=isOpen?'0':'400px';if(arrow)arrow.style.transform=isOpen?'':'rotate(180deg)';card.style.borderRadius=isOpen?'14px':'14px 14px 0 0';}
+
+function renderHomeRecent(){const el=document.getElementById('home-recent');if(!el)return;const recent=masterLog.slice(0,8);if(!recent.length){el.innerHTML='<div style="font-size:11px;color:var(--text3);text-align:center;padding:20px">Wala pang transactions</div>';return;}el.innerHTML=recent.map(t=>{const isInc=t.type==='income';const isExp=t.type==='expense';const cls=isInc?'inc':isExp?'exp':'trf';const ico=isInc?'↑':isExp?'↓':'⇄';const amtCls=isInc?'pos':isExp?'neg':'neu';const sign=isInc?'+':isExp?'-':'';return`<div class="tx-item"><div style="display:flex;align-items:flex-start;gap:10px;flex:1"><div class="tx-ico ${cls}">${ico}</div><div style="flex:1"><div class="tx-desc">${t.desc||t.cat||t.type}</div><div class="tx-meta">${t.date} · ${t.bizLine||'—'} · ${t.acc||'—'}</div></div></div><div class="tx-amt ${amtCls}">${sign}₱${t.amount.toLocaleString()}</div></div>`;}).join('');}
+
+let logFilter='All';
+function filterLog(f,el){logFilter=f;document.querySelectorAll('#screen-log .filter-chip').forEach(c=>c.classList.remove('on'));if(el)el.classList.add('on');renderLogList();}
+function renderLogList(){const el=document.getElementById('log-list');if(!el)return;let txs=[...masterLog];if(logFilter==='income')txs=txs.filter(t=>t.type==='income');else if(logFilter==='expense')txs=txs.filter(t=>t.type==='expense');else if(logFilter==='transfer')txs=txs.filter(t=>t.type.includes('transfer'));else if(['School','Studio','Events'].includes(logFilter))txs=txs.filter(t=>t.bizLine===logFilter);if(!txs.length){el.innerHTML='<div style="font-size:11px;color:var(--text3);padding:20px;text-align:center">Walang entries</div>';return;}el.innerHTML=txs.map(t=>{const isInc=t.type==='income';const isExp=t.type==='expense';const cls=isInc?'inc':isExp?'exp':'trf';const ico=isInc?'↑':isExp?'↓':'⇄';const amtCls=isInc?'pos':isExp?'neg':'neu';const sign=isInc?'+':isExp?'-':'';return`<div class="tx-item"><div style="display:flex;align-items:flex-start;gap:10px;flex:1"><div class="tx-ico ${cls}">${ico}</div><div style="flex:1"><div class="tx-desc">${t.desc||t.cat||t.type}</div><div class="tx-meta">${t.date} · ${t.bizLine||'—'} · ${t.acc||'—'}</div></div></div><div class="tx-amt ${amtCls}">${sign}₱${t.amount.toLocaleString()}</div></div>`;}).join('');}
+
+function renderSchoolDash(){const txs=masterLog.filter(t=>t.bizLine==='School');const si=(poolStarts.school?.income||0);const se=(poolStarts.school?.expense||0);const earned=si+txs.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);const expense=se+txs.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);const standing=earned-expense;const net=txs.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0)-txs.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);const fmt=v=>Math.abs(v)>=1000?'₱'+(Math.abs(v)/1000).toFixed(0)+'K':'₱'+Math.abs(Math.round(v)).toLocaleString();const sl=document.getElementById('school-standing-lbl');if(sl){sl.textContent=fmt(standing)+(standing<0?' (deficit)':'');sl.style.color=standing>=0?'var(--sage-b)':'var(--red)';}const el2=document.getElementById('school-earned-lbl');if(el2)el2.textContent=fmt(earned);const exp=document.getElementById('school-exp-lbl');if(exp)exp.textContent=fmt(expense);const nl=document.getElementById('school-net-lbl');if(nl){nl.textContent=fmt(Math.abs(net))+(net<0?' (deficit)':'');nl.style.color=net>=0?'var(--sage-b)':'var(--red)';}}
+function renderSchoolList(){const el=document.getElementById('school-list');if(!el)return;if(!schoolProjects.length){el.innerHTML='<div style="background:var(--card);border-radius:12px;padding:20px;text-align:center;font-size:11px;color:var(--text3)">Wala pang projects</div>';return;}el.innerHTML=schoolProjects.map(p=>{const txs=masterLog.filter(t=>t.proj===p.name);const inc=txs.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);const exp=txs.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);const net=inc-exp;const pos=net>=0;return`<div class="pcard"><div class="pcard-hdr" onclick="this.nextElementSibling.classList.toggle('open')"><div><div class="pcard-name">${p.name}</div><div class="pcard-tag">${p.service||'School'}</div></div><div class="pcard-net ${pos?'pos':'neg'}">₱${Math.abs(net).toLocaleString()}</div></div><div class="pcard-body"><div class="dtx"><div class="dtx-l"><div class="dtx-desc">Income</div></div><div class="dtx-amt p">₱${inc.toLocaleString()}</div></div><div class="dtx"><div class="dtx-l"><div class="dtx-desc">Expense</div></div><div class="dtx-amt n">₱${exp.toLocaleString()}</div></div><div style="margin-top:8px;display:flex;gap:6px"><button class="tq-btn tq-inc" style="flex:1;padding:7px;font-size:11px" onclick="openEntryForProject('income','School','${p.name.replace(/'/g,"\'")}')">+ Income</button><button class="tq-btn tq-exp" style="flex:1;padding:7px;font-size:11px" onclick="openEntryForProject('expense','School','${p.name.replace(/'/g,"\'")}')">- Expense</button></div></div></div>`;}).join('');}
+function openNewProject(){const name=prompt('Project name:');if(!name)return;const service=prompt('Service:','Class Picture')||'Class Picture';schoolProjects.push({name:name.trim(),service});localStorage.setItem('momenta_school',JSON.stringify(schoolProjects));renderSchoolList();}
+
+function renderStudioDash(){const mo=String(studioMonth+1).padStart(2,'0');const monthTxs=masterLog.filter(t=>t.bizLine==='Studio'&&t.date&&t.date.startsWith(studioYear+'-'+mo));const allTxs=masterLog.filter(t=>t.bizLine==='Studio');const si=(poolStarts.studio?.income||0);const se=(poolStarts.studio?.expense||0);const allE=si+allTxs.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);const allX=se+allTxs.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);const standing=allE-allX;const mInc=monthTxs.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);const mExp=monthTxs.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);const net=mInc-mExp;const fmt=v=>Math.abs(v)>=1000?'₱'+(Math.abs(v)/1000).toFixed(0)+'K':'₱'+Math.abs(Math.round(v)).toLocaleString();const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];const ml=document.getElementById('studio-month-lbl');if(ml)ml.textContent=months[studioMonth]+' '+studioYear;const se2=document.getElementById('studio-standing');if(se2){se2.textContent=fmt(standing)+(standing<0?' (deficit)':'');se2.style.color=standing>=0?'var(--sage-b)':'var(--red)';}const ie=document.getElementById('studio-inc');if(ie)ie.textContent=fmt(allE);const exp=document.getElementById('studio-exp');if(exp)exp.textContent=fmt(mExp);const ne=document.getElementById('studio-net');if(ne){ne.textContent=fmt(Math.abs(net))+(net<0?' (deficit)':'');ne.style.color=net>=0?'var(--sage-b)':'var(--red)';}const svcMap={'Self Shoot':'svc-self','Grad Shoot':'svc-grad','Theme Shoot':'svc-theme','Quick Prints':'svc-prints'};Object.entries(svcMap).forEach(([svc,id])=>{const total=monthTxs.filter(t=>t.type==='income'&&t.service===svc).reduce((s,t)=>s+t.amount,0);const el=document.getElementById(id);if(el)el.textContent=total?'₱'+total.toLocaleString():'—';});const ee=document.getElementById('studio-entries');if(ee){if(!monthTxs.length){ee.innerHTML='<div style="font-size:11px;color:var(--text3);text-align:center;padding:16px">Wala pang entries</div>';}else{ee.innerHTML=monthTxs.map(t=>`<div class="tx-item"><div style="flex:1"><div class="tx-desc">${t.desc||t.service||t.cat}</div><div class="tx-meta">${t.date} · ${t.acc||'—'}</div></div><div class="tx-amt ${t.type==='income'?'pos':'neg'}">${t.type==='income'?'+':'-'}₱${t.amount.toLocaleString()}</div></div>`).join('');}}}
+function changeMonth(dir){studioMonth+=dir;if(studioMonth<0){studioMonth=11;studioYear--;}if(studioMonth>11){studioMonth=0;studioYear++;}renderStudioDash();}
+function studioLogService(service){entry={type:'income',bizLine:'Studio',service,cat:service,date:todayStr(),loggedBy:user.name,dateType:'single'};currentFlow=[{q:'How much ₱?',render:renderAmt,valid:()=>!!entry.amount&&parseFloat(entry.amount)>0},{q:'When?',render:renderStudioDate,valid:()=>!!entry.date},{q:'Saan napunta ang pera?',render:renderStudioTransferred,valid:()=>entry.studioTransferred==='cashbox'||(entry.studioTransferred==='account'&&!!entry.acc)},{q:'Notes (optional)',render:renderDesc,valid:()=>true}];flowStep=0;document.getElementById('es-title').textContent=service+' — Income';document.getElementById('entry-overlay').classList.add('open');renderFlowStep();}
+
+function renderEventsDash(){const txs=masterLog.filter(t=>t.bizLine==='Events');const si=(poolStarts.events?.income||0);const se=(poolStarts.events?.expense||0);const earned=si+txs.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);const expense=se+txs.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);const standing=earned-expense;const net=txs.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0)-txs.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);const fmt=v=>Math.abs(v)>=1000?'₱'+(Math.abs(v)/1000).toFixed(0)+'K':'₱'+Math.abs(Math.round(v)).toLocaleString();const se2=document.getElementById('events-standing');if(se2){se2.textContent=fmt(standing)+(standing<0?' (deficit)':'');se2.style.color=standing>=0?'var(--sage-b)':'var(--red)';}const ee=document.getElementById('events-earned');if(ee)ee.textContent=fmt(earned);const exp=document.getElementById('events-exp');if(exp)exp.textContent=fmt(expense);const ne=document.getElementById('events-net');if(ne){ne.textContent=fmt(Math.abs(net))+(net<0?' (deficit)':'');ne.style.color=net>=0?'var(--sage-b)':'var(--red)';}}
+function renderEventsList(){const el=document.getElementById('events-list');if(!el)return;if(!eventProjects.length){el.innerHTML='<div style="background:var(--card);border-radius:12px;padding:20px;text-align:center;font-size:11px;color:var(--text3)">Wala pang events</div>';return;}el.innerHTML=eventProjects.map(p=>{const txs=masterLog.filter(t=>t.proj===p.name);const inc=txs.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);const exp=txs.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);const net=inc-exp;const pos=net>=0;return`<div class="pcard"><div class="pcard-hdr" onclick="this.nextElementSibling.classList.toggle('open')"><div><div class="pcard-name">${p.name}</div><div class="pcard-tag">${p.type||'Coverage'}</div></div><div class="pcard-net ${pos?'pos':'neg'}">₱${Math.abs(net).toLocaleString()}</div></div><div class="pcard-body"><div class="dtx"><div class="dtx-l"><div class="dtx-desc">Income</div></div><div class="dtx-amt p">₱${inc.toLocaleString()}</div></div><div class="dtx"><div class="dtx-l"><div class="dtx-desc">Expense</div></div><div class="dtx-amt n">₱${exp.toLocaleString()}</div></div><div style="margin-top:8px;display:flex;gap:6px"><button class="tq-btn tq-inc" style="flex:1;padding:7px;font-size:11px" onclick="openEntryForProject('income','Events','${p.name.replace(/'/g,"\'")}')">+ Income</button><button class="tq-btn tq-exp" style="flex:1;padding:7px;font-size:11px" onclick="openEntryForProject('expense','Events','${p.name.replace(/'/g,"\'")}')">- Expense</button></div></div></div>`;}).join('');}
+function openNewEvent(){const name=prompt('Event name:');if(!name)return;const type=prompt('Type:','Coverage')||'Coverage';eventProjects.push({name:name.trim(),type});localStorage.setItem('momenta_events',JSON.stringify(eventProjects));renderEventsList();}
+
+function renderCustomLoans(){const el=document.getElementById('custom-loans');if(!el)return;if(!customLoans.length){el.innerHTML='';return;}el.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">'+customLoans.map(loan=>{const pct=loan.totalOwed>0?Math.round(((loan.totalOwed-loan.remaining)/loan.totalOwed)*100):0;return`<div class="dc-wrap"><div class="dc dc-shara" onclick="toggleDebt(this)" style="${loan.settled?'opacity:0.6':''}"><div class="dc-hdr"><div class="dc-tag">${loan.settled?'SETTLED':'LOAN'}</div><div class="dc-arrow">▼</div></div><div class="dc-lbl">${loan.name.toUpperCase()}</div><div class="dc-amount" style="${loan.settled?'text-decoration:line-through;opacity:0.5':''}">₱${Math.round(loan.remaining).toLocaleString()}</div><div class="dc-recent">${loan.frequency||'On demand'}</div>${!loan.settled?`<div class="dc-log-btn" onclick="event.stopPropagation();logLoanPayment(${loan.id})" style="margin-bottom:5px">Log Payment →</div>`:''}
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:4px">
+${!loan.settled?`<div class="dc-log-btn" onclick="event.stopPropagation();settleLoan(${loan.id})" style="background:rgba(92,184,122,0.15);border-color:rgba(92,184,122,0.3);color:var(--green)">Settled</div>`:'<div></div>'}
+<div class="dc-log-btn" onclick="event.stopPropagation();deleteLoan(${loan.id})" style="background:rgba(217,96,96,0.1);border-color:rgba(217,96,96,0.2);color:var(--red)">Delete</div></div></div>
+<div class="dc-expand">${loan.payments.length?`<div class="dsub-lbl">Payments — ${pct}% paid</div>`:''}${loan.payments.map(p=>`<div class="dtx"><div class="dtx-l"><div class="dtx-desc">${p.desc||'Payment'}</div><div class="dtx-date">${p.date} · ${p.acc||''}</div></div><div class="dtx-amt p">-₱${p.amount.toLocaleString()}</div></div>`).join('')}<div class="dtotal"><div class="dtotal-l">Remaining</div><div class="dtotal-v" style="color:${loan.settled?'var(--green)':'var(--red)'}">₱${Math.round(loan.remaining).toLocaleString()}</div></div></div></div>`;}).join('')+'</div>';}
+function settleLoan(id){const loan=customLoans.find(l=>l.id===id);if(!loan)return;showConfirm('Mark as Settled?',loan.name+' — settled?',function(){loan.settled=true;loan.remaining=0;saveLoanRecord(loan);localStorage.setItem('momenta_loans',JSON.stringify(customLoans));renderCustomLoans();});}
+function deleteLoan(id){const loan=customLoans.find(l=>l.id===id);if(!loan)return;showConfirm('Delete Loan?',loan.name,function(){customLoans=customLoans.filter(l=>l.id!==id);localStorage.setItem('momenta_loans',JSON.stringify(customLoans));renderCustomLoans();});}
+function saveLoanRecord(loan){const r={id:Date.now(),name:loan.name,principal:loan.amount,totalPaid:loan.payments.reduce((s,p)=>s+p.amount,0),startDate:loan.date,settledDate:todayStr(),payments:loan.payments};loanRecords.unshift(r);localStorage.setItem('momenta_loan_records',JSON.stringify(loanRecords));}
+function openDeleteLoanPicker(){if(!customLoans.length){alert('Walang loans');return;}entry={type:'delete-loan-picker'};currentFlow=[{q:'Which loan to delete?',render:renderLoanDeletePicker,valid:()=>!!entry.loanToDelete}];flowStep=0;document.getElementById('es-title').textContent='Delete Loan';document.getElementById('entry-overlay').classList.add('open');renderFlowStep();}
+function renderLoanDeletePicker(c){const loans=customLoans.filter(l=>!l.settled);c.innerHTML+=`<div class="olist">${loans.map(l=>`<button class="obtn ${entry.loanToDelete===l.id?'sel':''}" onclick="selOpt('loanToDelete',${l.id},this)"><div class="oleft"><div class="oico" style="color:var(--red)">X</div><div><div class="olbl">${l.name}</div><div class="osub">₱${Math.round(l.remaining).toLocaleString()} remaining</div></div></div><span class="ochk">✓</span></button>`).join('')}</div>`;}
+function openAddLoan(){entry={type:'add-loan',date:todayStr(),loggedBy:user.name,interestType:'none',interestRate:0,loanFrequency:'On demand'};currentFlow=[{q:'Lender name?',render:renderLoanName,valid:()=>!!entry.loanName&&entry.loanName.trim().length>0},{q:'Principal amount?',render:renderAmt,valid:()=>!!entry.amount&&parseFloat(entry.amount)>0},{q:'Interest?',render:renderLoanInterest,valid:()=>entry.interestType!==undefined},{q:'Terms?',render:renderLoanTerms,valid:()=>!!entry.loanFrequency},{q:'When?',render:renderDate,valid:()=>true},{q:'Notes (optional)',render:renderDesc,valid:()=>true}];flowStep=0;document.getElementById('es-title').textContent='Add Loan';document.getElementById('entry-overlay').classList.add('open');renderFlowStep();}
+function renderLoanName(c){c.innerHTML+=`<div class="twrap"><input class="tinput" id="loanf" type="text" placeholder="e.g. Tita Rosa, BDO..." value="${entry.loanName||''}" oninput="entry.loanName=this.value;updateNbtn()"></div>`;setTimeout(()=>document.getElementById('loanf')?.focus(),150);}
+function renderLoanInterest(c){const opts=[{k:'none',i:'0',l:'Walang interest'},{k:'monthly',i:'%',l:'Monthly interest'},{k:'onetime',i:'1x',l:'One-time interest'}];c.innerHTML+=`<div class="olist">${opts.map(o=>`<button class="obtn ${entry.interestType===o.k?'sel':''}" onclick="selLoanInterestType('${o.k}',this)"><div class="oleft"><div class="oico">${o.i}</div><div><div class="olbl">${o.l}</div></div></div><span class="ochk">✓</span></button>`).join('')}</div><div id="interest-rate-wrap" style="margin-top:10px;display:${entry.interestType&&entry.interestType!=='none'?'block':'none'}"><div class="awrap" style="padding:12px 16px"><input class="ainput" type="number" inputmode="decimal" style="font-size:32px" placeholder="0" value="${entry.interestRate||''}" oninput="entry.interestRate=parseFloat(this.value)||0"><div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--text3)">%</div></div></div>`;}
+function selLoanInterestType(type,el){entry.interestType=type;el.closest('.olist').querySelectorAll('.obtn').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');const wrap=document.getElementById('interest-rate-wrap');if(wrap)wrap.style.display=type!=='none'?'block':'none';if(type==='none')entry.interestRate=0;updateNbtn();}
+function renderLoanTerms(c){const opts=[{k:'Bullet',s:'Isahan'},{k:'Monthly',s:'Monthly'},{k:'Weekly',s:'Weekly'},{k:'On demand',s:'Kapag hiningi'},{k:'Custom',s:'Custom'}];c.innerHTML+=`<div class="olist">${opts.map(o=>`<button class="obtn ${entry.loanFrequency===o.k?'sel':''}" onclick="selOpt('loanFrequency','${o.k}',this)"><div class="oleft"><div class="oico" style="font-size:10px;font-weight:700">${o.k[0]}</div><div><div class="olbl">${o.k}</div><div class="osub">${o.s}</div></div></div><span class="ochk">✓</span></button>`).join('')}</div><div style="margin-top:10px"><div class="date-wrap"><div class="date-lbl">Due date (optional)</div><input class="date-input" type="date" id="due-date" value="${entry.dueDate||''}" onchange="entry.dueDate=this.value"></div></div>`;}
+function logLoanPayment(loanId){const loan=customLoans.find(l=>l.id===loanId);if(!loan)return;entry={type:'loan-payment',loanId,loanName:loan.name,date:todayStr(),loggedBy:user.name};currentFlow=[{q:'Payment amount?',render:(c)=>{c.innerHTML+=`<div style="background:var(--card2);border-radius:10px;padding:12px;margin-bottom:10px;border-left:3px solid var(--red)"><div style="font-size:9px;color:var(--text3)">Remaining</div><div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--red)">₱${Math.round(loan.remaining).toLocaleString()}</div></div><div class="awrap"><div class="peso">₱</div><input class="ainput" id="af" type="text" inputmode="decimal" placeholder="0" oninput="handleAmtInput(this)"></div><button onclick="entry.amount=String(loan.remaining);document.getElementById('af').value=loan.remaining.toLocaleString();updateNbtn()" style="width:100%;padding:8px;background:var(--sage-glow);border:1px solid var(--sage-dim);border-radius:8px;color:var(--sage-b);font-size:11px;font-weight:700;cursor:pointer;font-family:'Barlow Condensed',sans-serif;margin-top:8px">Full Payment</button>`;},valid:()=>!!entry.amount&&parseFloat(entry.amount)>0},{q:'From which account?',render:renderAcc,valid:()=>!!entry.acc},{q:'Notes (optional)',render:renderDesc,valid:()=>true}];flowStep=0;document.getElementById('es-title').textContent='Pay '+loan.name;document.getElementById('entry-overlay').classList.add('open');renderFlowStep();}
+
+function openEntry(type,bizLine){entry={type,bizLine,date:todayStr(),loggedBy:user.name};currentFlow=[{q:'How much?',render:renderAmt,valid:()=>!!entry.amount&&parseFloat(entry.amount)>0},{q:'Business line?',render:renderBizLine,valid:()=>!!entry.bizLine},{q:'Which account?',render:renderAcc,valid:()=>!!entry.acc},{q:'Category?',render:renderCat,valid:()=>!!entry.cat},{q:'When?',render:renderDate,valid:()=>true},{q:'Notes (optional)',render:renderDesc,valid:()=>true}];flowStep=0;document.getElementById('es-title').textContent=type==='income'?'Log Income':'Log Expense';document.getElementById('entry-overlay').classList.add('open');renderFlowStep();}
+function openEntryForProject(type,bizLine,proj){entry={type,bizLine,proj,date:todayStr(),loggedBy:user.name};currentFlow=[{q:'How much?',render:renderAmt,valid:()=>!!entry.amount&&parseFloat(entry.amount)>0},{q:'Which account?',render:renderAcc,valid:()=>!!entry.acc},{q:'Category?',render:renderCat,valid:()=>!!entry.cat},{q:'When?',render:renderDate,valid:()=>true},{q:'Notes (optional)',render:renderDesc,valid:()=>true}];flowStep=0;document.getElementById('es-title').textContent=proj+' — '+(type==='income'?'Income':'Expense');document.getElementById('entry-overlay').classList.add('open');renderFlowStep();}
+function openContextEntry(contextType){entry={type:contextType,date:todayStr(),loggedBy:user.name};if(contextType==='almira-draw'||contextType==='joyce-draw'){currentFlow=[{q:'Ano ito?',render:renderDrawType,valid:()=>!!entry.drawType},{q:'Amount?',render:renderAmt,valid:()=>!!entry.amount&&parseFloat(entry.amount)>0},{q:'What for?',render:renderDesc,valid:()=>!!entry.desc&&entry.desc.trim().length>0},{q:'From which account?',render:renderAcc,valid:()=>!!entry.acc}];document.getElementById('es-title').textContent=contextType==='almira-draw'?'Almira Draw':'Joyce Draw';}else if(contextType==='shared-draw'){currentFlow=[{q:'Amount?',render:renderAmt,valid:()=>!!entry.amount&&parseFloat(entry.amount)>0},{q:'What for?',render:renderDesc,valid:()=>!!entry.desc&&entry.desc.trim().length>0},{q:'From which account?',render:renderAcc,valid:()=>!!entry.acc}];document.getElementById('es-title').textContent='Shared Expense';}flowStep=0;document.getElementById('entry-overlay').classList.add('open');renderFlowStep();}
+function openSharaPayment(){entry={type:'shara-payment',date:todayStr(),loggedBy:user.name};currentFlow=[{q:'Payment amount?',render:renderAmt,valid:()=>!!entry.amount&&parseFloat(entry.amount)>0},{q:'From which account?',render:renderAcc,valid:()=>!!entry.acc},{q:'Notes (optional)',render:renderDesc,valid:()=>true}];flowStep=0;document.getElementById('es-title').textContent='Pay Shara Loan';document.getElementById('entry-overlay').classList.add('open');renderFlowStep();}
+function openTransfer(fromAcc){entry={type:'transfer',fromAcc,acc:fromAcc,date:todayStr(),loggedBy:user.name};currentFlow=[{q:`Transfer amount from ${fromAcc}?`,render:renderAmt,valid:()=>!!entry.amount&&parseFloat(entry.amount)>0},{q:'Transfer to which account?',render:(c)=>renderAccExcluding(c,fromAcc),valid:()=>!!entry.toAcc},{q:'From which business line?',render:renderTransferBizLine,valid:()=>!!entry.bizLine},{q:'When?',render:renderDate,valid:()=>true},{q:'Notes (optional)',render:renderDesc,valid:()=>true}];flowStep=0;document.getElementById('es-title').textContent='Transfer from '+fromAcc;document.getElementById('entry-overlay').classList.add('open');renderFlowStep();}
+function openPoolTransfer(){entry={type:'pool-transfer',date:todayStr(),loggedBy:user.name};currentFlow=[{q:'Transfer from which pool?',render:renderFromPool,valid:()=>!!entry.fromPool},{q:'Transfer to which pool?',render:renderToPool,valid:()=>!!entry.toPool},{q:'How much?',render:renderAmt,valid:()=>!!entry.amount&&parseFloat(entry.amount)>0},{q:'Saan account napunta?',render:renderAcc,valid:()=>!!entry.acc},{q:'Reason',render:renderDesc,valid:()=>!!entry.desc&&entry.desc.trim().length>0}];flowStep=0;document.getElementById('es-title').textContent='Pool Transfer';document.getElementById('entry-overlay').classList.add('open');renderFlowStep();}
+function openCashBoxTransfer(){entry={type:'cashbox-transfer',date:todayStr(),loggedBy:user.name};currentFlow=[{q:'Amount to transfer?',render:renderAmt,valid:()=>!!entry.amount&&parseFloat(entry.amount)>0},{q:'Transfer to which account?',render:renderAcc,valid:()=>!!entry.acc},{q:'Notes (optional)',render:renderDesc,valid:()=>true}];flowStep=0;document.getElementById('es-title').textContent='Cash Box Transfer';document.getElementById('entry-overlay').classList.add('open');renderFlowStep();}
+
+function renderFlowStep(){const step=currentFlow[flowStep];if(!step)return;document.getElementById('es-q').innerHTML=step.q;const body=document.getElementById('es-body');body.innerHTML='';step.render(body);const prog=document.getElementById('es-progress');prog.innerHTML=currentFlow.map((_,i)=>`<div class="es-prog-dot ${i<flowStep?'done':i===flowStep?'active':''}"></div>`).join('');updateNbtn();}
+function updateNbtn(){const btn=document.getElementById('nxt-btn');if(!btn)return;const isLast=flowStep===currentFlow.length-1;btn.textContent=isLast?'Submit ✓':'Next →';btn.classList.toggle('active',currentFlow[flowStep]?.valid()||false);}
+function nextStep(){if(!currentFlow[flowStep]?.valid())return;if(entry.type==='delete-loan-picker'){closeEntry();deleteLoan(entry.loanToDelete);return;}if(flowStep<currentFlow.length-1){flowStep++;renderFlowStep();}else submitEntry();}
+function closeEntry(){document.getElementById('entry-overlay').classList.remove('open');entry={};currentFlow=[];flowStep=0;}
+
+function handleAmtInput(input){const raw=input.value.replace(/,/g,'');const num=parseFloat(raw);entry.amount=isNaN(num)?'':String(num);updateNbtn();}
+function renderAmt(c){c.innerHTML='<div class="awrap"><div class="peso">₱</div><input class="ainput" id="af" type="text" inputmode="decimal" placeholder="0" oninput="handleAmtInput(this)"></div>';setTimeout(()=>document.getElementById('af')?.focus(),150);}
+function renderBizLine(c){const opts=[{k:'School',i:'🏫',s:'School Partnership'},{k:'Studio',i:'🎬',s:'Studio'},{k:'Events',i:'📷',s:'Events'},{k:'General',i:'G',s:'General / Mixed'}];c.innerHTML=`<div class="olist">${opts.map(o=>`<button class="obtn ${entry.bizLine===o.k?'sel':''}" onclick="selBL('${o.k}',this)"><div class="oleft"><div class="oico">${o.i}</div><div><div class="olbl">${o.k}</div><div class="osub">${o.s}</div></div></div><span class="ochk">✓</span></button>`).join('')}</div>`;}
+function selBL(val,el){entry.bizLine=val;el.closest('.olist').querySelectorAll('.obtn').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');updateNbtn();}
+function renderAcc(c){const accs=[{k:'BDO Business',i:'B',s:'Checking'},{k:'GCash Almira',i:'A',s:'Wallet'},{k:'GCash Joyce',i:'J',s:'Wallet'},{k:'Cash',i:'C',s:'On hand'}];c.innerHTML=`<div class="olist">${accs.map(a=>`<button class="obtn ${entry.acc===a.k?'sel':''}" onclick="selOpt('acc','${a.k}',this)"><div class="oleft"><div class="oico">${a.i}</div><div><div class="olbl">${a.k}</div><div class="osub">${a.s}</div></div></div><span class="ochk">✓</span></button>`).join('')}</div>`;}
+function renderAccExcluding(c,exclude){const accs=[{k:'BDO Business',i:'B',s:'Checking'},{k:'GCash Almira',i:'A',s:'Wallet'},{k:'GCash Joyce',i:'J',s:'Wallet'},{k:'Cash',i:'C',s:'On hand'}].filter(a=>a.k!==exclude);c.innerHTML=`<div class="olist">${accs.map(a=>`<button class="obtn ${entry.toAcc===a.k?'sel':''}" onclick="selOpt('toAcc','${a.k}',this)"><div class="oleft"><div class="oico">${a.i}</div><div><div class="olbl">${a.k}</div><div class="osub">${a.s}</div></div></div><span class="ochk">✓</span></button>`).join('')}</div>`;}
+function renderTransferBizLine(c){const opts=[{k:'School',i:'🏫'},{k:'Studio',i:'🎬'},{k:'Events',i:'📷'},{k:'General',i:'G'}];c.innerHTML=`<div class="olist">${opts.map(o=>`<button class="obtn ${entry.bizLine===o.k?'sel':''}" onclick="selBL('${o.k}',this)"><div class="oleft"><div class="oico">${o.i}</div><div><div class="olbl">${o.k}</div></div></div><span class="ochk">✓</span></button>`).join('')}</div>`;}
+function renderCat(c){const cats={income:['Package Fee','DP/Down Payment','Balance Payment','Add-on','Other'],expense:['Prints','Lab','Transportation','Salary','Shipping','Supplies','Rent','Electricity','Internet','Food','Other']};const list=entry.type==='income'?cats.income:cats.expense;c.innerHTML=`<div class="olist">${list.map(cat=>`<button class="obtn ${entry.cat===cat?'sel':''}" onclick="selOpt('cat','${cat}',this)"><div class="oleft"><div class="olbl">${cat}</div></div><span class="ochk">✓</span></button>`).join('')}</div>`;}
+function renderDate(c){c.innerHTML=`<div class="date-wrap"><div class="date-lbl">Date</div><input class="date-input" type="date" id="df" value="${entry.date||todayStr()}" onchange="entry.date=this.value;updateNbtn()"></div>`;}
+function renderStudioDate(c){const isRange=entry.dateType==='range';c.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px"><button class="obtn ${!isRange?'sel':''}" onclick="setStudioDateType('single',this)" style="justify-content:center"><div class="olbl">Single Day</div></button><button class="obtn ${isRange?'sel':''}" onclick="setStudioDateType('range',this)" style="justify-content:center"><div class="olbl">Date Range</div></button></div><div id="studio-date-inputs"></div>`;renderStudioDateInputs();}
+function setStudioDateType(type,el){entry.dateType=type;el.closest('div').querySelectorAll('.obtn').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');if(type==='single')entry.dateTo='';renderStudioDateInputs();updateNbtn();}
+function renderStudioDateInputs(){const wrap=document.getElementById('studio-date-inputs');if(!wrap)return;if(entry.dateType==='range'){wrap.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div class="date-wrap"><div class="date-lbl">From</div><input class="date-input" type="date" id="df-from" value="${entry.date||todayStr()}" onchange="entry.date=this.value;updateNbtn()"></div><div class="date-wrap"><div class="date-lbl">To</div><input class="date-input" type="date" id="df-to" value="${entry.dateTo||todayStr()}" onchange="entry.dateTo=this.value;updateNbtn()"></div></div>`;}else{wrap.innerHTML=`<div class="date-wrap"><div class="date-lbl">Date</div><input class="date-input" type="date" id="df" value="${entry.date||todayStr()}" onchange="entry.date=this.value;entry.dateTo='';updateNbtn()"></div>`;}}
+function renderStudioTransferred(c){c.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="obtn ${entry.studioTransferred==='cashbox'?'sel':''}" onclick="selStudioTransfer('cashbox',this)" style="flex-direction:column;align-items:flex-start;padding:14px"><div style="font-size:18px;margin-bottom:6px">📦</div><div class="olbl">Studio Cash Box</div><div class="osub" style="margin-top:3px">Hindi pa nililipat</div></button><button class="obtn ${entry.studioTransferred==='account'?'sel':''}" onclick="selStudioTransfer('account',this)" style="flex-direction:column;align-items:flex-start;padding:14px"><div style="font-size:18px;margin-bottom:6px">🏦</div><div class="olbl">Business Accounts</div><div class="osub" style="margin-top:3px">GCash o BDO</div></button></div><div id="studio-acc-picker" style="margin-top:10px;display:${entry.studioTransferred==='account'?'block':'none'}"></div>`;if(entry.studioTransferred==='account')showStudioAccPicker();}
+function selStudioTransfer(val,el){entry.studioTransferred=val;el.closest('div').querySelectorAll('.obtn').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');if(val==='cashbox'){entry.acc='Studio Cash Box';const p=document.getElementById('studio-acc-picker');if(p)p.style.display='none';}else{entry.acc='';const p=document.getElementById('studio-acc-picker');if(p){p.style.display='block';showStudioAccPicker();}}updateNbtn();}
+function showStudioAccPicker(){const p=document.getElementById('studio-acc-picker');if(!p)return;const accs=[{k:'GCash Almira',i:'A'},{k:'GCash Joyce',i:'J'},{k:'BDO Business',i:'B'},{k:'Cash',i:'C'}];p.innerHTML=`<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:8px">Saan na-transfer?</div><div class="olist">${accs.map(a=>`<button class="obtn ${entry.acc===a.k?'sel':''}" onclick="selStudioAcc('${a.k}',this)"><div class="oleft"><div class="oico">${a.i}</div><div><div class="olbl">${a.k}</div></div></div><span class="ochk">✓</span></button>`).join('')}</div>`;}
+function selStudioAcc(val,el){entry.acc=val;el.closest('.olist').querySelectorAll('.obtn').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');updateNbtn();}
+function renderFromPool(c){const pools=[{k:'School',i:'🏫'},{k:'Studio',i:'🎬'},{k:'Events',i:'📷'}];c.innerHTML=`<div class="olist">${pools.map(p=>`<button class="obtn ${entry.fromPool===p.k?'sel':''}" onclick="selOpt('fromPool','${p.k}',this)"><div class="oleft"><div class="oico">${p.i}</div><div><div class="olbl">${p.k} Pool</div></div></div><span class="ochk">✓</span></button>`).join('')}</div>`;}
+function renderToPool(c){const pools=[{k:'School',i:'🏫'},{k:'Studio',i:'🎬'},{k:'Events',i:'📷'}].filter(p=>p.k!==entry.fromPool);c.innerHTML=`<div class="olist">${pools.map(p=>`<button class="obtn ${entry.toPool===p.k?'sel':''}" onclick="selOpt('toPool','${p.k}',this)"><div class="oleft"><div class="oico">${p.i}</div><div><div class="olbl">${p.k} Pool</div></div></div><span class="ochk">✓</span></button>`).join('')}</div>`;}
+function renderDrawType(c){c.innerHTML=`<div class="olist"><button class="obtn ${entry.drawType==='utang'?'sel':''}" onclick="selOpt('drawType','utang',this)"><div class="oleft"><div class="oico">↑</div><div><div class="olbl">Utang sa Business</div><div class="osub">Kumuha ng pera</div></div></div><span class="ochk">✓</span></button><button class="obtn ${entry.drawType==='bayad'?'sel':''}" onclick="selOpt('drawType','bayad',this)"><div class="oleft"><div class="oico">↓</div><div><div class="olbl">Bayad ng Business</div><div class="osub">Binayaran na</div></div></div><span class="ochk">✓</span></button></div>`;}
+function renderDesc(c){c.innerHTML=`<div class="twrap"><input class="tinput" id="df" type="text" placeholder="Add notes..." value="${entry.desc||''}" oninput="entry.desc=this.value"></div>`;setTimeout(()=>document.getElementById('df')?.focus(),150);}
+function selOpt(key,val,el){entry[key]=val;el.closest('.olist').querySelectorAll('.obtn').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');updateNbtn();}
+
+function submitEntry(){
+  const amt=parseFloat(entry.amount)||0;
+  if(!amt&&entry.type!=='add-loan')return;
+  const accMap={'BDO Business':'bdo','GCash Almira':'gcashA','GCash Joyce':'gcashJ','Cash':'cash','Studio Cash Box':'cashbox'};
+  const accKey=accMap[entry.acc];const toKey=accMap[entry.toAcc];
+  const tx={id:Date.now(),type:entry.type,bizLine:entry.bizLine||'General',amount:amt,date:entry.date||todayStr(),dateTo:entry.dateTo||'',desc:entry.desc||'',cat:entry.cat||'',acc:entry.acc||'',toAcc:entry.toAcc||'',fromAcc:entry.fromAcc||'',proj:entry.proj||'',service:entry.service||'',owner:entry.owner||'Shared',loggedBy:user.name||'',studioTransferred:entry.studioTransferred||'',drawType:entry.drawType||'',fromPool:entry.fromPool||'',toPool:entry.toPool||'',settled:false,loanId:entry.loanId||null,loanName:entry.loanName||''};
+  if(tx.type==='add-loan'){const principal=amt;const rate=parseFloat(entry.interestRate)||0;let totalOwed=principal;if(entry.interestType==='onetime')totalOwed=principal+(principal*(rate/100));const loan={id:tx.id,name:entry.loanName.trim(),amount:principal,interestType:entry.interestType||'none',interestRate:rate,totalOwed,remaining:totalOwed,frequency:entry.loanFrequency||'On demand',dueDate:entry.dueDate||'',date:tx.date,notes:tx.desc||'',payments:[]};customLoans.push(loan);localStorage.setItem('momenta_loans',JSON.stringify(customLoans));renderCustomLoans();closeEntry();return;}
+  if(tx.type==='loan-payment'){const loan=customLoans.find(l=>l.id===tx.loanId);if(loan){loan.remaining=Math.max(0,loan.remaining-amt);loan.payments.push({amount:amt,date:tx.date,desc:tx.desc,acc:tx.acc});if(loan.remaining<=0){loan.settled=true;saveLoanRecord(loan);}localStorage.setItem('momenta_loans',JSON.stringify(customLoans));renderCustomLoans();}if(accKey)accountBalances[accKey]=Math.max(0,(accountBalances[accKey]||0)-amt);localStorage.setItem('momenta_balances',JSON.stringify(accountBalances));renderBalances();masterLog.unshift(tx);localStorage.setItem('momenta_log',JSON.stringify(masterLog.slice(0,500)));sendToSheet(tx);closeEntry();refreshAll();return;}
+  if(tx.type==='shara-payment'){obligations.shara=Math.max(0,(obligations.shara||550000)-amt);localStorage.setItem('momenta_obligations',JSON.stringify(obligations));updateDebtCards();if(accKey)accountBalances[accKey]=Math.max(0,(accountBalances[accKey]||0)-amt);localStorage.setItem('momenta_balances',JSON.stringify(accountBalances));renderBalances();}
+  if(tx.type==='almira-draw'){const isBayad=entry.drawType==='bayad';if(!isBayad)obligations.almiraDraws=(obligations.almiraDraws||0)+amt;else obligations.almiraDraws=Math.max(0,(obligations.almiraDraws||0)-amt);localStorage.setItem('momenta_obligations',JSON.stringify(obligations));updateDebtCards();if(accKey)accountBalances[accKey]=Math.max(0,(accountBalances[accKey]||0)-amt);localStorage.setItem('momenta_balances',JSON.stringify(accountBalances));renderBalances();}
+  if(tx.type==='joyce-draw'){const isBayad=entry.drawType==='bayad';if(!isBayad)obligations.joyceBiz=(obligations.joyceBiz||0)+amt;else obligations.joyceBiz=Math.max(0,(obligations.joyceBiz||0)-amt);localStorage.setItem('momenta_obligations',JSON.stringify(obligations));updateDebtCards();if(accKey)accountBalances[accKey]=Math.max(0,(accountBalances[accKey]||0)-amt);localStorage.setItem('momenta_balances',JSON.stringify(accountBalances));renderBalances();}
+  if(tx.type==='transfer'){if(accKey)accountBalances[accKey]=Math.max(0,(accountBalances[accKey]||0)-amt);if(toKey)accountBalances[toKey]=(accountBalances[toKey]||0)+amt;localStorage.setItem('momenta_balances',JSON.stringify(accountBalances));renderBalances();}
+  if(tx.type==='cashbox-transfer'){if(toKey)accountBalances[toKey]=(accountBalances[toKey]||0)+amt;accountBalances.cashbox=Math.max(0,(accountBalances.cashbox||0)-amt);localStorage.setItem('momenta_balances',JSON.stringify(accountBalances));renderBalances();}
+  if(tx.type==='income'){if(accKey&&tx.acc!=='Studio Cash Box')accountBalances[accKey]=(accountBalances[accKey]||0)+amt;localStorage.setItem('momenta_balances',JSON.stringify(accountBalances));renderBalances();}
+  if(tx.type==='expense'){if(accKey)accountBalances[accKey]=Math.max(0,(accountBalances[accKey]||0)-amt);localStorage.setItem('momenta_balances',JSON.stringify(accountBalances));renderBalances();}
+  if(tx.type==='pool-transfer'){if(accKey)accountBalances[accKey]=(accountBalances[accKey]||0)+amt;localStorage.setItem('momenta_balances',JSON.stringify(accountBalances));renderBalances();}
+  masterLog.unshift(tx);localStorage.setItem('momenta_log',JSON.stringify(masterLog.slice(0,500)));sendToSheet(tx);closeEntry();refreshAll();
+}
+function refreshAll(){renderHomeRecent();renderBalances();renderPoolStanding();renderAccountPools();renderLogList();renderSchoolDash();renderStudioDash();renderEventsDash();renderSchoolList();renderEventsList();updateDebtCards();renderCustomLoans();}
+
+async function sendToSheet(tx){if(!sheetUrl||!sheetConnected)return;try{await fetch(sheetUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'addTransaction',...tx})});}catch(e){offlineQueue.push(tx);localStorage.setItem('momenta_offline',JSON.stringify(offlineQueue));updateOfflineBanner();}}
+async function syncOfflineQueue(){if(!navigator.onLine||!offlineQueue.length||!sheetUrl)return;const q=[...offlineQueue];offlineQueue=[];localStorage.setItem('momenta_offline','[]');updateOfflineBanner();for(const tx of q)await sendToSheet(tx);}
+function updateOfflineBanner(){const b=document.getElementById('offline-banner');if(b){b.classList.toggle('show',offlineQueue.length>0);if(offlineQueue.length)b.textContent=offlineQueue.length+' entries queued';}}
+window.addEventListener('online',syncOfflineQueue);
+function connectSheetFromInput(){const input=document.getElementById('sheet-url-input');const msg=document.getElementById('sheet-status-msg');if(!input)return;const url=input.value.trim();if(!url){if(msg){msg.textContent='Please paste the URL first.';msg.style.color='var(--red)';}return;}sheetUrl=url;sheetConnected=true;localStorage.setItem('momenta_sheet_url',url);const dot=document.getElementById('sdot');const stat=document.getElementById('sstat');if(dot)dot.style.background='var(--green)';if(stat)stat.textContent='Connected';if(msg){msg.textContent='Connected! Lahat ng bagong entries ay mag-a-sync.';msg.style.color='var(--green)';}syncOfflineQueue();}
+
+function switchReportTab(tab){activeReportTab=tab;['statement','owner','loans'].forEach(t=>{const btn=document.getElementById('rtab-'+t);const sec=document.getElementById('rsec-'+t);if(btn)btn.classList.toggle('on',t===tab);if(sec)sec.style.display=t===tab?'block':'none';});if(tab==='loans')renderLoanRecords();if(tab==='owner'){const year=new Date().getFullYear();const fe=document.getElementById('owner-from');const te=document.getElementById('owner-to');if(fe&&!fe.value)fe.value=year+'-01-01';if(te&&!te.value)te.value=year+'-12-31';setOwnerMode('auto');const el=document.getElementById('owner-stmt-content');if(el)el.innerHTML='';}}
+function setStmtLine(val,el){stmtLine=val;document.querySelectorAll('#rsec-statement .obtn').forEach(b=>b.classList.remove('sel'));if(el)el.classList.add('sel');}
+function generateStatement(){const from=document.getElementById('date-from')?.value;const to=document.getElementById('date-to')?.value;if(!from||!to)return;const f=new Date(from);const t=new Date(to);const filtered=masterLog.filter(tx=>{if(!tx.date)return false;const d=new Date(tx.date);if(d<f||d>t)return false;if(stmtLine!=='All'&&tx.bizLine!==stmtLine)return false;return true;});const ibl={School:0,Studio:0,Events:0};const ebl={School:0,Studio:0,Events:0,General:0};filtered.forEach(tx=>{if(tx.type==='income'&&ibl.hasOwnProperty(tx.bizLine))ibl[tx.bizLine]+=tx.amount;else if(tx.type==='expense'){if(ebl.hasOwnProperty(tx.bizLine))ebl[tx.bizLine]+=tx.amount;else ebl.General+=tx.amount;}});const totalInc=Object.values(ibl).reduce((s,v)=>s+v,0);const totalExp=Object.values(ebl).reduce((s,v)=>s+v,0);const netInc=totalInc-totalExp;const pos=netInc>=0;const fp=v=>v?'₱'+Math.round(v).toLocaleString():'—';document.getElementById('stmt-period').textContent=f.toLocaleDateString('en-PH',{month:'long',day:'numeric',year:'numeric'})+' — '+t.toLocaleDateString('en-PH',{month:'long',day:'numeric',year:'numeric'});document.getElementById('stmt-line-label').textContent=stmtLine==='All'?'All Business Lines':stmtLine;document.getElementById('stmt-body').innerHTML=`<div class="stmt-sec-t">Revenue</div>${stmtLine==='All'?`<div class="stmt-row"><div class="stmt-rn ind">School</div><div class="stmt-rv pos">${fp(ibl.School)}</div></div><div class="stmt-row"><div class="stmt-rn ind">Studio</div><div class="stmt-rv pos">${fp(ibl.Studio)}</div></div><div class="stmt-row"><div class="stmt-rn ind">Events</div><div class="stmt-rv pos">${fp(ibl.Events)}</div></div>`:`<div class="stmt-row"><div class="stmt-rn ind">${stmtLine}</div><div class="stmt-rv pos">${fp(totalInc)}</div></div>`}<div class="stmt-tot"><div class="stmt-tot-l">Total Revenue</div><div class="stmt-tot-v pos">${fp(totalInc)}</div></div><div class="stmt-sec-t">Expenses</div>${stmtLine==='All'?`<div class="stmt-row"><div class="stmt-rn ind">School</div><div class="stmt-rv neg">${fp(ebl.School)}</div></div><div class="stmt-row"><div class="stmt-rn ind">Studio</div><div class="stmt-rv neg">${fp(ebl.Studio)}</div></div><div class="stmt-row"><div class="stmt-rn ind">Events</div><div class="stmt-rv neg">${fp(ebl.Events)}</div></div><div class="stmt-row"><div class="stmt-rn ind">General</div><div class="stmt-rv neg">${fp(ebl.General)}</div></div>`:`<div class="stmt-row"><div class="stmt-rn ind">${stmtLine} Expenses</div><div class="stmt-rv neg">${fp(totalExp)}</div></div>`}<div class="stmt-tot"><div class="stmt-tot-l">Total Expenses</div><div class="stmt-tot-v neg">${fp(totalExp)}</div></div><div class="stmt-sec-t">Summary</div><div class="stmt-row"><div class="stmt-rn">Gross Revenue</div><div class="stmt-rv pos">${fp(totalInc)}</div></div><div class="stmt-row"><div class="stmt-rn">Total Expenses</div><div class="stmt-rv neg">${fp(totalExp)}</div></div><div class="stmt-tot"><div class="stmt-tot-l">Net Income</div><div class="stmt-tot-v ${pos?'pos':'neg'}">${fp(netInc)}</div></div>`;}
+function setOwnerMode(mode){const isAuto=mode==='auto';const ac=document.getElementById('owner-mode-auto');const cc=document.getElementById('owner-mode-custom');const ci=document.getElementById('owner-custom-inputs');if(ac){ac.style.background=isAuto?'var(--sage-glow)':'var(--card2)';ac.style.borderColor=isAuto?'var(--sage)':'var(--line)';}if(cc){cc.style.background=isAuto?'var(--card2)':'var(--sage-glow)';cc.style.borderColor=isAuto?'var(--line)':'var(--sage)';}if(ci)ci.style.display=isAuto?'none':'block';}
+function generateOwnerStatement(){const el=document.getElementById('owner-stmt-content');if(!el)return;const fv=document.getElementById('owner-from')?.value;const tv=document.getElementById('owner-to')?.value;const fd=fv?new Date(fv):null;const td=tv?new Date(tv):null;const pl=fd&&td?fd.toLocaleDateString('en-PH',{month:'long',day:'numeric',year:'numeric'})+' — '+td.toLocaleDateString('en-PH',{month:'long',day:'numeric',year:'numeric'}):'All Periods';const ir=t=>{if(!fd||!td)return true;if(!t.date)return false;const d=new Date(t.date);return d>=fd&&d<=td;};const ni=parseFloat(document.getElementById('owner-net-income')?.value)||0;const ai=masterLog.filter(t=>t.type==='income'&&ir(t)).reduce((s,t)=>s+t.amount,0);const ae=masterLog.filter(t=>t.type==='expense'&&ir(t)).reduce((s,t)=>s+t.amount,0);const cn=ai-ae;const netIncome=ni||cn;const gp=parseFloat(document.getElementById('split-general-pct')?.value)||50;const ap=parseFloat(document.getElementById('split-almira-pct')?.value)||25;const jp=parseFloat(document.getElementById('split-joyce-pct')?.value)||25;const gf=netIncome*(gp/100);const as=netIncome*(ap/100);const js=netIncome*(jp/100);const ad=obligations.almiraDraws||0;const aset=as-ad;const jd=obligations.joyceBiz||0;const jset=js-jd;const sh=obligations.shared||0;const fmt=v=>'₱'+Math.abs(Math.round(v)).toLocaleString();const row=(lbl,val,cls,ind=false)=>`<div class="stmt-row"><div class="stmt-rn${ind?' ind':''}">${lbl}</div><div class="stmt-rv ${cls}">${val}</div></div>`;el.innerHTML=`<div style="border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px;text-align:center"><div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:var(--text)">MOMENTA CINEMA</div><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-top:2px">Owner Statement</div><div style="font-size:11px;color:var(--sage-b);font-weight:600;margin-top:4px">${pl}</div><div style="font-size:9px;color:var(--text3);margin-top:3px">Generated: ${new Date().toLocaleDateString('en-PH',{month:'long',day:'numeric',year:'numeric'})}</div></div><div style="background:var(--card2);border-radius:10px;padding:14px;margin-bottom:10px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--line)">A. Net Income Split</div>${row('Total Net Income',fmt(netIncome),'pos')}${row('General Fund ('+gp+'%)',fmt(gf),'pos',true)}${row('Owner Pool ('+(100-gp)+'%)',fmt(as+js),'pos',true)}${row('Almira Share ('+ap+'%)',fmt(as),'pos',true)}${row('Joyce Share ('+jp+'%)',fmt(js),'pos',true)}</div><div style="background:var(--card2);border-radius:10px;padding:14px;margin-bottom:10px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--line)">B. Personal Draws vs Share</div><div style="font-size:9px;font-weight:700;color:var(--text3);margin:6px 0 4px">ALMIRA</div>${row('Share entitled',fmt(as),'pos',true)}${row('Total Draws',fmt(ad),'neg',true)}<div style="display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid var(--line);margin-top:4px"><div style="font-size:11px;font-weight:700;color:var(--text)">${aset>=0?'Business owes Almira':'Almira owes Business'}</div><div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:${aset>=0?'var(--green)':'var(--red)'};">${fmt(aset)}</div></div><div style="height:1px;background:var(--line);margin:10px 0"></div><div style="font-size:9px;font-weight:700;color:var(--text3);margin-bottom:4px">JOYCE</div>${row('Share entitled',fmt(js),'pos',true)}${row('Total Draws',fmt(jd),'neg',true)}<div style="display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid var(--line);margin-top:4px"><div style="font-size:11px;font-weight:700;color:var(--text)">${jset>=0?'Business owes Joyce':'Joyce owes Business'}</div><div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:${jset>=0?'var(--green)':'var(--red)'};">${fmt(jset)}</div></div></div><div style="background:var(--card2);border-radius:10px;padding:14px;margin-bottom:10px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--line)">C. Shared Obligations</div>${row('Total Shared Expenses',fmt(sh),'neg')}${row('Almira owes (50%)',fmt(sh/2),'neg',true)}${row('Joyce owes (50%)',fmt(sh/2),'neg',true)}</div><div style="background:var(--card2);border-radius:10px;padding:14px;margin-bottom:10px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--line)">D. Standing Obligations</div>${row('Shara Loan (remaining)',fmt(obligations.shara||550000),'neg',true)}${row('Business owes Almira',fmt(obligations.almiraOwed||321458),'neg',true)}${row('Joyce owes Business',fmt(obligations.joyceBiz||175087),'neg',true)}${row('Joyce owes Almira (personal)',fmt(obligations.joyceAlmira||25600),'neg',true)}${customLoans.filter(l=>!l.settled).map(l=>row(l.name,fmt(l.remaining),'neg',true)).join('')}</div>`;}
+function renderLoanRecords(){const el=document.getElementById('loan-records-list');if(!el)return;if(!loanRecords.length){el.innerHTML='<div style="background:var(--card);border-radius:12px;padding:20px;text-align:center;font-size:11px;color:var(--text3)">Wala pang settled loans</div>';return;}el.innerHTML=loanRecords.map(r=>`<div style="background:var(--card);border-radius:12px;padding:14px;margin-bottom:8px"><div style="display:flex;justify-content:space-between;margin-bottom:8px"><div><div style="font-size:13px;font-weight:600;color:var(--text)">${r.name}</div><div style="font-size:9px;color:var(--text3);margin-top:2px">${r.startDate} → ${r.settledDate}</div></div><div style="text-align:right"><div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--green)">Settled</div><div style="font-size:9px;color:var(--text3)">₱${r.totalPaid.toLocaleString()} paid</div></div></div></div>`).join('');}
+
+function showConfirm(title,msg,cb){confirmCb=cb;document.getElementById('confirm-title').textContent=title;document.getElementById('confirm-msg').textContent=msg;document.getElementById('confirm-overlay').classList.add('open');}
+function hideConfirm(){document.getElementById('confirm-overlay').classList.remove('open');confirmCb=null;}
+function confirmAction(){if(confirmCb)confirmCb();hideConfirm();}
+
+function initApp(){
+  const theme=localStorage.getItem('momenta_theme')||'dark';
+  document.documentElement.setAttribute('data-theme',theme);
+  document.querySelectorAll('#theme-btn,#theme-btn2').forEach(b=>b.textContent=theme==='light'?'☀':'🌙');
+  const balFields=[['set-bdo','bdo'],['set-gcash-a','gcashA'],['set-gcash-j','gcashJ'],['set-cash','cash'],['set-cashbox','cashbox']];
+  balFields.forEach(([id,k])=>{const el=document.getElementById(id);if(el&&accountBalances[k])el.value=accountBalances[k];});
+  const obsFields=[['set-shara','shara'],['set-almira-owed','almiraOwed'],['set-shared','shared'],['set-joyce-biz','joyceBiz'],['set-joyce-almira','joyceAlmira'],['set-almira-draws','almiraDraws'],['set-net-income','netIncome']];
+  obsFields.forEach(([id,k])=>{const el=document.getElementById(id);if(el&&obligations[k])el.value=obligations[k];});
+  ['school','studio','events','general'].forEach(pool=>{['income','expense'].forEach(type=>{const el=document.getElementById('set-'+pool+'-'+type);if(el&&poolStarts[pool])el.value=poolStarts[pool][type]||'';});});
+  const savedUrl=localStorage.getItem('momenta_sheet_url');
+  if(savedUrl){sheetUrl=savedUrl;sheetConnected=true;const dot=document.getElementById('sdot');const stat=document.getElementById('sstat');if(dot)dot.style.background='var(--green)';if(stat)stat.textContent='Connected';const ui=document.getElementById('sheet-url-input');if(ui)ui.value=savedUrl;}
+  const un=document.getElementById('set-user-name');if(un)un.textContent=user.name;
+  const ub=document.getElementById('user-badge');if(ub)ub.textContent=user.initial;
+  updateDebtCards();renderBalances();updateRunway();renderHomeRecent();renderAccountPools();renderPoolStanding();renderCustomLoans();updateOfflineBanner();
+}
+
+const savedUser=localStorage.getItem('momenta_user');
+if(savedUser){try{const u=JSON.parse(savedUser);if(u&&u.name)selectUser(u.name,u.initial,u.key,u.role);}catch(e){}}
+</script>
+<script>
+if('serviceWorker' in navigator && location.protocol === 'https:'){
+  const swCode=`const CACHE='momenta-v3';self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['/'])));self.skipWaiting();});self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));self.clients.claim();});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(cached=>cached||fetch(e.request).then(r=>{const clone=r.clone();caches.open(CACHE).then(c=>c.put(e.request,clone));return r;}).catch(()=>cached)));});`;
+  const blob=new Blob([swCode],{type:'application/javascript'});
+  navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
+}
+</script>
+</body>
+</html>
