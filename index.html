@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0e0f14">
+<title>Momenta Finance</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Barlow+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+[data-theme="dark"]{
+  --bg:#0e0f14;--bg2:#13141a;--card:#1a1c24;--card2:#20222c;--card3:#282b36;
+  --line:rgba(255,255,255,0.06);--line2:rgba(255,255,255,0.03);
+  --sage:#7a9868;--sage-b:#95b880;--sage-glow:rgba(122,152,104,0.1);--sage-dim:rgba(122,152,104,0.22);
+  --text:#e8eaf0;--text2:#8a8ea8;--text3:#50546a;
+  --green:#5cb87a;--red:#d96060;--orange:#d4843a;--yellow:#d4a435;--blue:#5898c8;--purple:#8878c8;
+}
+[data-theme="light"]{
+  --bg:#f0f1f6;--bg2:#e6e8f0;--card:#ffffff;--card2:#f4f5fa;--card3:#eceef5;
+  --line:rgba(0,0,0,0.06);--line2:rgba(0,0,0,0.03);
+  --sage:#527040;--sage-b:#658c50;--sage-glow:rgba(82,112,64,0.07);--sage-dim:rgba(82,112,64,0.18);
+  --text:#181a24;--text2:#505468;--text3:#9098b0;
+  --green:#2a8a4a;--red:#b84040;--orange:#b86018;--yellow:#906818;--blue:#2868a8;--purple:#5848a8;
+  --card-border-light:rgba(0,0,0,0.15);
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden;position:fixed;width:100%;transition:background .3s,color .3s}
+.app{height:100%;display:flex;flex-direction:column;max-width:430px;margin:0 auto}
+.screen{display:none;flex-direction:column;height:100%}
+.screen.active{display:flex}
+.sb{height:44px;flex-shrink:0}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 18px 10px;flex-shrink:0}
+.t-brand{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;letter-spacing:1px;color:var(--text);line-height:1}
+.t-sub{font-size:9px;color:var(--text3);margin-top:1px;font-weight:500;letter-spacing:.5px;text-transform:uppercase}
+.t-right{display:flex;align-items:center;gap:8px}
+.icon-btn{width:32px;height:32px;border-radius:10px;background:var(--card);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;transition:background .2s}
+.icon-btn:active{background:var(--card2)}
+.av-btn{width:32px;height:32px;border-radius:10px;background:var(--sage-glow);border:1.5px solid var(--sage-dim);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--sage-b);cursor:pointer}
+
+/* OFFLINE BANNER */
+.offline-banner{background:#2a1a0a;border-bottom:1px solid rgba(212,132,58,0.3);padding:6px 18px;display:none;align-items:center;gap:8px;flex-shrink:0}
+.offline-banner.show{display:flex}
+.offline-dot{width:6px;height:6px;border-radius:50%;background:var(--orange);flex-shrink:0}
+.offline-text{font-size:9px;font-weight:600;color:var(--orange);letter-spacing:.5px}
+.offline-count{font-size:9px;color:var(--text3);margin-left:auto}
+
+/* SCROLL */
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:0 16px 100px}
+
+/* SECTION LABEL */
+.sec{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin:16px 0 8px;display:flex;align-items:center;gap:8px}
+.sec::after{content:'';flex:1;height:1px;background:var(--line)}
+
+/* NET HERO */
+.net-hero{background:var(--card);border-radius:14px;padding:18px;margin-bottom:12px;position:relative;overflow:hidden}
+.net-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:140px;height:140px;border-radius:50%;background:var(--sage-glow)}
+.net-period{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:4px}
+.net-val{font-family:'Barlow Condensed',sans-serif;font-size:44px;font-weight:700;color:var(--text);line-height:1;letter-spacing:-.5px}
+.net-sub{font-size:10px;color:var(--text3);margin-top:4px;font-weight:500}
+.runway-row{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.runway-label{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text3)}
+.runway-val{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:var(--yellow)}
+.runway-sub{font-size:8px;color:var(--text3);margin-top:1px;text-align:right}
+
+/* QUICK LOG BUTTONS */
+.quick-log-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.ql-btn{padding:14px;border-radius:12px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:"Barlow Condensed",sans-serif;font-size:16px;font-weight:700;letter-spacing:.5px;transition:all .15s}
+.ql-btn:active{transform:scale(.97)}
+.ql-income{background:rgba(92,184,122,0.15);color:var(--green);border:1.5px solid rgba(92,184,122,0.25)}
+.ql-expense{background:rgba(217,96,96,0.15);color:var(--red);border:1.5px solid rgba(217,96,96,0.25)}
+
+/* DEBT CARDS */
+.debt-cat{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:7px;padding-left:2px}
+.debt-cat.red{color:var(--red)}
+.debt-cat.orange{color:var(--orange)}
+.debt-cat.blue{color:var(--blue)}
+.debt-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.debt-full{margin-bottom:8px}
+.debt-grid-personal{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.dc{border-radius:14px;padding:14px;cursor:pointer;transition:transform .15s;position:relative;overflow:hidden;border:1.5px solid transparent}
+[data-theme="light"] .dc{border-color:rgba(0,0,0,0.12)}
+.dc:active{transform:scale(.97)}
+.dc::after{content:'';position:absolute;bottom:-28px;right:-28px;width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,0.05)}
+.dc-shara{background:linear-gradient(140deg,#2c1010,#3d1414,#4a1818)}
+.dc-almira-debt{background:linear-gradient(140deg,#241416,#341a1e,#3e1e22)}
+.dc-shared{background:linear-gradient(140deg,#201408,#2e1c0a,#381e0c)}
+.dc-personal-j{background:linear-gradient(140deg,#101828,#162030,#1a2838)}
+.dc-personal-a{background:linear-gradient(140deg,#101828,#162030,#1a2838)}
+[data-theme="light"] .dc-shara{background:linear-gradient(140deg,#f0c0c0,#e8aaaa)}
+[data-theme="light"] .dc-almira-debt{background:linear-gradient(140deg,#f4ccd0,#eababe)}
+[data-theme="light"] .dc-shared{background:linear-gradient(140deg,#f4dec8,#eacca8)}
+[data-theme="light"] .dc-personal-j{background:linear-gradient(140deg,#c8d8f0,#b8cce8)}
+[data-theme="light"] .dc-personal-a{background:linear-gradient(140deg,#d0d8f0,#c0cce8)}
+.dc-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.dc-tag{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:3px 8px;border-radius:4px;background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.65)}
+[data-theme="light"] .dc-tag{background:rgba(0,0,0,0.08);color:rgba(0,0,0,0.45)}
+.dc-arrow{font-size:8px;color:rgba(255,255,255,0.3);transition:transform .3s;margin-top:4px}
+[data-theme="light"] .dc-arrow{color:rgba(0,0,0,0.25)}
+.dc.open .dc-arrow{transform:rotate(180deg);color:rgba(255,255,255,0.7)}
+.dc-lbl{font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:3px}
+[data-theme="light"] .dc-lbl{color:rgba(0,0,0,0.3)}
+.dc-amount{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700;color:rgba(255,255,255,0.92);letter-spacing:-.3px;line-height:1}
+[data-theme="light"] .dc-amount{color:rgba(0,0,0,0.75)}
+.dc-recent{font-size:8px;color:rgba(255,255,255,0.3);margin-top:5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+[data-theme="light"] .dc-recent{color:rgba(0,0,0,0.28)}
+/* Log payment button inside card */
+.dc-log-btn{margin-top:10px;width:100%;padding:7px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:rgba(255,255,255,0.6);font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:background .15s;text-align:center}
+.dc-log-btn:active{background:rgba(255,255,255,0.15)}
+[data-theme="light"] .dc-log-btn{background:rgba(0,0,0,0.06);border-color:rgba(0,0,0,0.1);color:rgba(0,0,0,0.45)}
+
+/* Joyce taller card */
+.dc-divider{height:1px;background:rgba(255,255,255,0.08);margin:10px 0}
+[data-theme="light"] .dc-divider{background:rgba(0,0,0,0.06)}
+.dc-entry-lbl{font-size:7px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:2px}
+[data-theme="light"] .dc-entry-lbl{color:rgba(0,0,0,0.28)}
+.dc-entry-amt{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:rgba(255,255,255,0.88);letter-spacing:-.3px;line-height:1}
+[data-theme="light"] .dc-entry-amt{color:rgba(0,0,0,0.72)}
+.dc-entry-recent{font-size:8px;color:rgba(255,255,255,0.28);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+[data-theme="light"] .dc-entry-recent{color:rgba(0,0,0,0.25)}
+
+/* Expand */
+.dc-expand{background:var(--card);border-radius:0 0 12px 12px;max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.16,1,.3,1);margin-top:-4px}
+.dc-wrap{margin-bottom:8px}
+.dc-wrap .dc.open{border-radius:12px 12px 0 0}
+.dc-wrap .dc.open + .dc-expand{max-height:500px;padding:12px 14px 14px}
+.dc-full-wrap{margin-bottom:8px}
+.dc-full-wrap .dc.open{border-radius:12px 12px 0 0}
+.dc-full-wrap .dc.open + .dc-expand{max-height:800px;padding:12px 14px 14px}
+.dtx{display:flex;align-items:flex-start;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line2)}
+.dtx:last-of-type{border-bottom:none}
+.dtx-l{flex:1}
+.dtx-desc{font-size:10px;font-weight:500;color:var(--text)}
+.dtx-date{font-size:9px;color:var(--text3);margin-top:1px}
+.dtx-amt{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;flex-shrink:0;padding-left:10px}
+.dtx-amt.p{color:var(--green)}
+.dtx-amt.n{color:var(--red)}
+.dtotal{display:flex;justify-content:space-between;align-items:center;padding:8px 0 0;margin-top:4px;border-top:1px solid var(--line)}
+.dtotal-l{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)}
+.dtotal-v{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700}
+.dsub-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);padding:7px 0 3px;margin-top:3px;border-top:1px solid var(--line2)}
+
+/* ACCOUNTS */
+.accounts-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:16px}
+.acc-tag{border-radius:10px;padding:10px 8px;position:relative;overflow:hidden}
+.acc-tag::after{content:'';position:absolute;bottom:-14px;right:-14px;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.06)}
+.acc-navy{background:linear-gradient(135deg,#111e3a,#182850)}
+.acc-teal{background:linear-gradient(135deg,#0e2828,#143838)}
+.acc-sky{background:linear-gradient(135deg,#101e30,#162840)}
+.acc-olive{background:linear-gradient(135deg,#181e0e,#222c12)}
+[data-theme="light"] .acc-navy{background:linear-gradient(135deg,#c0cce8,#aabcd8)}
+[data-theme="light"] .acc-teal{background:linear-gradient(135deg,#b0d4d0,#9ac4c0)}
+[data-theme="light"] .acc-sky{background:linear-gradient(135deg,#b8d0ec,#a4bfe0)}
+[data-theme="light"] .acc-olive{background:linear-gradient(135deg,#c8d4a8,#b8c498)}
+.acc-name{font-size:7px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+[data-theme="light"] .acc-name{color:rgba(0,0,0,0.35)}
+.acc-bal{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,0.85);letter-spacing:-.2px;line-height:1}
+[data-theme="light"] .acc-bal{color:rgba(0,0,0,0.68)}
+.acc-type{font-size:7px;color:rgba(255,255,255,0.25);margin-top:2px}
+[data-theme="light"] .acc-type{color:rgba(0,0,0,0.22)}
+
+/* BOTTOM NAV */
+.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--card);border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom,14px);z-index:100}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;padding:9px 0 5px;cursor:pointer;gap:2px;background:none;border:none}
+.ni:active{opacity:.5}
+.ni-icon{font-size:14px;line-height:1}
+.ni-lbl{font-size:7px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;color:var(--text3)}
+.ni.on .ni-lbl{color:var(--sage-b)}
+.ni-dot{width:3px;height:3px;border-radius:50%;background:var(--sage-b);margin:0 auto;opacity:0;margin-top:1px}
+.ni.on .ni-dot{opacity:1}
+
+/* TAB DASHBOARD HEADER */
+.tab-dash{background:var(--card);border-radius:14px;padding:16px;margin-bottom:10px}
+.tab-dash-title{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:10px}
+.tab-kpis{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:12px}
+.tkpi{background:var(--card2);border-radius:10px;padding:10px}
+.tkpi-l{font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)}
+.tkpi-v{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;margin-top:3px}
+.tkpi-v.i{color:var(--green)}
+.tkpi-v.e{color:var(--red)}
+.tkpi-v.n{color:var(--sage-b)}
+/* Quick log inside tab */
+.tab-quick{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:14px}
+.tq-btn{padding:12px;border-radius:10px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.5px;transition:all .15s}
+.tq-btn:active{transform:scale(.97)}
+.tq-inc{background:rgba(92,184,122,0.13);color:var(--green);border:1.5px solid rgba(92,184,122,0.22)}
+.tq-exp{background:rgba(217,96,96,0.13);color:var(--red);border:1.5px solid rgba(217,96,96,0.22)}
+
+/* PROJECT CARDS */
+.pcard{background:var(--card);border-radius:12px;margin-bottom:6px;overflow:hidden;cursor:pointer}
+.pcard-top{display:flex;align-items:center;justify-content:space-between;padding:12px 14px}
+.pcard-l{flex:1;min-width:0}
+.pcard-name{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pcard-tag{font-size:9px;color:var(--text3);margin-top:2px;font-weight:500}
+.pcard-r{display:flex;align-items:center;gap:7px;flex-shrink:0;padding-left:10px}
+.pcard-net{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700}
+.pcard-net.pos{color:var(--green)}
+.pcard-net.neg{color:var(--red)}
+.pcard-arr{font-size:8px;color:var(--text3);transition:transform .3s}
+.pcard.open .pcard-arr{transform:rotate(180deg);color:var(--sage)}
+.pcard-detail{max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.16,1,.3,1)}
+.pcard.open .pcard-detail{max-height:400px}
+.pcard-di{padding:0 14px 13px}
+.pcard-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:8px}
+.pstat{background:var(--card2);border-radius:8px;padding:9px}
+.pstat-l{font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)}
+.pstat-v{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;margin-top:2px}
+.pbar{height:3px;background:var(--card3);border-radius:2px}
+.pbar-f{height:100%;border-radius:2px;transition:width .8s ease}
+/* Log income btn inside project card */
+.pcard-log-btn{margin-top:8px;width:100%;padding:8px;background:var(--sage-glow);border:1px solid var(--sage-dim);border-radius:8px;color:var(--sage-b);font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:.5px;cursor:pointer;text-align:center;transition:background .15s}
+.pcard-log-btn:active{background:rgba(122,152,104,.2)}
+
+/* EXPENSE BREAKDOWN TABLE */
+.breakdown-table{background:var(--card);border-radius:12px;overflow:hidden;margin-bottom:10px}
+.bt-hdr{display:grid;grid-template-columns:1fr auto auto;gap:10px;padding:10px 13px;border-bottom:1px solid var(--line);font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)}
+.bt-row{display:grid;grid-template-columns:1fr auto auto;gap:10px;padding:9px 13px;border-bottom:1px solid var(--line2);align-items:center}
+.bt-row:last-child{border-bottom:none}
+.bt-name{font-size:11px;font-weight:500;color:var(--text)}
+.bt-month{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--text2);text-align:right}
+.bt-total{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--red);text-align:right}
+.bt-trend{font-size:9px;font-weight:600;padding:2px 6px;border-radius:4px}
+.bt-trend.up{background:rgba(217,96,96,0.12);color:var(--red)}
+.bt-trend.dn{background:rgba(92,184,122,0.12);color:var(--green)}
+
+/* SALARY BREAKDOWN */
+.salary-list{background:var(--card);border-radius:12px;overflow:hidden;margin-bottom:10px}
+.sl-row{display:flex;align-items:center;justify-content:space-between;padding:10px 13px;border-bottom:1px solid var(--line2)}
+.sl-row:last-child{border-bottom:none}
+.sl-name{font-size:11px;font-weight:600;color:var(--text)}
+.sl-role{font-size:9px;color:var(--text3);margin-top:1px}
+.sl-total{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--red)}
+
+/* MASTER LOG */
+.log-filters{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;padding-bottom:4px}
+.log-filters::-webkit-scrollbar{display:none}
+.filter-chip{padding:6px 12px;border-radius:20px;font-size:10px;font-weight:600;letter-spacing:.3px;cursor:pointer;white-space:nowrap;border:1.5px solid var(--line);background:var(--card);color:var(--text3);transition:all .15s;flex-shrink:0}
+.filter-chip.on{background:var(--sage-glow);border-color:var(--sage-dim);color:var(--sage-b)}
+.filter-chip:active{transform:scale(.95)}
+.log-item{display:flex;align-items:center;gap:10px;padding:11px 13px;background:var(--card);border-radius:10px;margin-bottom:4px}
+.log-type{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;flex-shrink:0}
+.log-type.inc{background:rgba(92,184,122,0.12);color:var(--green)}
+.log-type.exp{background:rgba(217,96,96,0.12);color:var(--red)}
+.log-type.trx{background:rgba(88,152,200,0.12);color:var(--blue)}
+.log-type.drw{background:rgba(212,132,58,0.12);color:var(--orange)}
+.log-mid{flex:1;min-width:0}
+.log-desc{font-size:11px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.log-meta{font-size:9px;color:var(--text3);margin-top:1px}
+.log-right{text-align:right;flex-shrink:0}
+.log-amt{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700}
+.log-amt.pos{color:var(--green)}
+.log-amt.neg{color:var(--red)}
+.log-amt.trx{color:var(--blue)}
+.log-amt.drw{color:var(--orange)}
+.log-pending{font-size:7px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--orange);margin-top:1px}
+
+/* ENTRY MODAL (bottom sheet) */
+.entry-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:flex-end;justify-content:center;z-index:300;backdrop-filter:blur(6px)}
+.entry-overlay.open{display:flex}
+.entry-sheet{width:100%;max-width:430px;background:var(--card);border-radius:20px 20px 0 0;max-height:90vh;display:flex;flex-direction:column;animation:slideUp .3s cubic-bezier(.16,1,.3,1)}
+.es-handle{width:36px;height:4px;background:var(--line);border-radius:2px;margin:14px auto 0;flex-shrink:0}
+.es-hdr{padding:14px 18px 10px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between}
+.es-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--text)}
+.es-close{width:28px;height:28px;background:var(--card2);border-radius:8px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:var(--text3)}
+.es-body{flex:1;overflow-y:auto;padding:0 18px 20px}
+.es-step-q{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700;color:var(--text);margin-bottom:14px;line-height:1.1}
+.es-step-q em{color:var(--sage-b);font-style:normal}
+.es-dots{display:flex;gap:3px;margin-bottom:14px}
+.es-dot{flex:1;height:3px;border-radius:2px;background:var(--card3);transition:background .3s}
+.es-dot.done{background:var(--sage)}
+.es-dot.active{background:var(--sage-b)}
+
+/* option buttons inside entry */
+.olist{display:flex;flex-direction:column;gap:4px}
+.obtn{display:flex;align-items:center;justify-content:space-between;padding:12px 13px;background:var(--card2);border-radius:10px;border:1.5px solid var(--line);cursor:pointer;transition:all .15s;width:100%;text-align:left}
+.obtn:active{transform:scale(.98)}
+.obtn.sel{border-color:var(--sage);background:var(--sage-glow)}
+.oleft{display:flex;align-items:center;gap:10px}
+.oico{width:28px;height:28px;border-radius:8px;background:var(--card3);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;font-family:'Barlow Condensed',sans-serif;font-weight:700;color:var(--text2)}
+.olbl{font-size:12px;font-weight:600;color:var(--text);text-align:left}
+.osub{font-size:9px;color:var(--text3);margin-top:1px;text-align:left}
+.ochk{font-size:11px;color:var(--sage-b);opacity:0;transition:opacity .15s;flex-shrink:0}
+.obtn.sel .ochk{opacity:1}
+/* BIG option buttons for business line */
+.big-opts{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.big-obtn{padding:16px 12px;background:var(--card2);border-radius:12px;border:1.5px solid var(--line);cursor:pointer;text-align:center;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:6px}
+.big-obtn:active{transform:scale(.97)}
+.big-obtn.sel{border-color:var(--sage);background:var(--sage-glow)}
+.big-icon{font-size:22px}
+.big-lbl{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--text);letter-spacing:.3px}
+.big-sub{font-size:9px;color:var(--text3)}
+/* Amount */
+.awrap{background:var(--card2);border-radius:12px;border:1.5px solid var(--line);padding:16px;display:flex;align-items:center;gap:8px;transition:border-color .2s}
+.awrap:focus-within{border-color:var(--sage)}
+.peso{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:700;color:var(--sage-b);flex-shrink:0}
+.ainput{flex:1;background:none;border:none;font-family:'Barlow Condensed',sans-serif;font-size:42px;font-weight:700;color:var(--text);outline:none;width:100%;min-width:0}
+.ainput::placeholder{color:var(--card3)}
+/* Date */
+.date-row{display:flex;gap:8px;margin-top:10px}
+.date-wrap{flex:1;background:var(--card2);border-radius:10px;border:1.5px solid var(--line);padding:10px 12px;transition:border-color .2s}
+.date-wrap:focus-within{border-color:var(--sage)}
+.date-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:4px}
+.date-input{width:100%;background:none;border:none;font-size:12px;font-weight:600;color:var(--text);outline:none}
+/* text input */
+.twrap{background:var(--card2);border-radius:12px;border:1.5px solid var(--line);padding:14px;transition:border-color .2s}
+.twrap:focus-within{border-color:var(--sage)}
+.tinput{width:100%;background:none;border:none;font-size:14px;font-weight:500;color:var(--text);outline:none;line-height:1.6}
+.tinput::placeholder{color:var(--text3)}
+/* skipbtn */
+.skipbtn{margin-top:6px;width:100%;padding:11px;background:none;border:1.5px dashed var(--line);border-radius:10px;color:var(--text3);font-size:10px;font-weight:600;letter-spacing:.5px;cursor:pointer;transition:all .15s}
+.skipbtn:active{border-color:var(--sage);color:var(--sage)}
+/* action bar */
+.es-footer{padding:12px 18px;padding-bottom:calc(12px + env(safe-area-inset-bottom,14px));flex-shrink:0;background:var(--card);border-top:1px solid var(--line)}
+.nbtn{width:100%;padding:15px;background:var(--sage);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:.5px;border:none;border-radius:12px;cursor:pointer;opacity:.3;pointer-events:none;transition:all .15s}
+.nbtn.go{opacity:1;pointer-events:all}
+.nbtn.go:active{transform:scale(.98);background:var(--sage-b)}
+
+/* STATEMENT */
+.dp-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.dp-wrap{background:var(--card);border-radius:10px;padding:10px 13px;border:1.5px solid var(--line)}
+.dp-wrap:focus-within{border-color:var(--sage)}
+.dp-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:4px}
+.dp-input{width:100%;background:none;border:none;font-size:12px;font-weight:600;color:var(--text);outline:none}
+.gen-btn{width:100%;padding:14px;background:var(--sage);color:#fff;font-family:"Barlow Condensed",sans-serif;font-size:16px;font-weight:700;letter-spacing:.5px;border:none;border-radius:12px;cursor:pointer;margin-bottom:16px;transition:all .15s}
+.gen-btn:active{transform:scale(.98);background:var(--sage-b)}
+.stmt-doc{background:var(--card);border-radius:14px;padding:18px;display:none}
+.stmt-doc.show{display:block}
+.stmt-hd{text-align:center;margin-bottom:16px;padding-bottom:14px;border-bottom:2px solid var(--line)}
+.stmt-co{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--text);letter-spacing:.5px}
+.stmt-dt{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-top:2px}
+.stmt-pd{font-size:11px;color:var(--sage-b);font-weight:600;margin-top:4px}
+.stmt-sec{margin-bottom:14px}
+.stmt-sec-t{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text2);margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--line)}
+.stmt-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--line2)}
+.stmt-row:last-child{border-bottom:none}
+.stmt-rn{font-size:11px;font-weight:500;color:var(--text)}
+.stmt-rn.ind{padding-left:12px;color:var(--text2);font-size:10px}
+.stmt-rv{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700}
+.stmt-rv.pos{color:var(--green)}
+.stmt-rv.neg{color:var(--red)}
+.stmt-tot{display:flex;justify-content:space-between;align-items:center;padding:10px 0 0;margin-top:6px;border-top:2px solid var(--line)}
+.stmt-tot-l{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.5px}
+.stmt-tot-v{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:700}
+.stmt-tot-v.pos{color:var(--green)}
+.stmt-tot-v.neg{color:var(--red)}
+
+/* USER SELECT */
+.usel{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 18px;gap:24px}
+.usel-logo{font-family:'Barlow Condensed',sans-serif;font-size:52px;font-weight:700;color:var(--text);text-align:center;letter-spacing:-.5px;line-height:.95}
+.usel-sub{font-size:11px;font-weight:500;color:var(--text3);text-align:center}
+.ubtns{display:flex;flex-direction:column;gap:8px;width:100%}
+.ubtn{padding:16px 18px;background:var(--card);border-radius:14px;border:1.5px solid var(--line);cursor:pointer;display:flex;align-items:center;gap:14px;transition:all .15s}
+.ubtn:active{border-color:var(--sage);background:var(--sage-glow)}
+.uav{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;flex-shrink:0}
+.uav.a{background:rgba(217,96,96,0.12);color:var(--red)}
+.uav.j{background:rgba(88,152,200,0.12);color:var(--blue)}
+.uname{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--text)}
+.urole{font-size:10px;color:var(--text3);font-weight:500;margin-top:1px}
+
+/* LIST HDR */
+.list-hdr{padding:0 18px 10px;display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0}
+.lh-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--text)}
+.lh-sub{font-size:10px;color:var(--text3);font-weight:500;margin-top:1px}
+.add-btn2{padding:7px 12px;background:var(--sage);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;border:none;border-radius:8px;cursor:pointer;white-space:nowrap;margin-top:2px}
+.add-btn2:active{background:var(--sage-b)}
+
+/* STUDIO */
+.studio-month-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.month-arr{width:28px;height:28px;background:var(--card2);border-radius:8px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px}
+.month-arr:active{background:var(--card3)}
+.month-lbl{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:var(--text)}
+.studio-services{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:12px}
+.svc-card{background:var(--card2);border-radius:10px;padding:10px 12px}
+.svc-name{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)}
+.svc-amt{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:var(--green);margin-top:3px}
+
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.ndot{width:6px;height:6px;border-radius:50%;background:var(--text3)}
+.ndot.on{background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 2s infinite}
+.ndot-l{font-size:10px;font-weight:500;color:var(--text3)}
+
+[data-theme="light"] .net-hero{border:1.5px solid rgba(0,0,0,0.1)}
+[data-theme="light"] .pcard{border:1.5px solid rgba(0,0,0,0.1)}
+[data-theme="light"] .tab-dash{border:1.5px solid rgba(0,0,0,0.1)}
+[data-theme="light"] .acc-tag{border:1.5px solid rgba(0,0,0,0.12)}
+[data-theme="light"] .log-item{border:1px solid rgba(0,0,0,0.08)}
+[data-theme="light"] .studio-card{border:1.5px solid rgba(0,0,0,0.1)}
+[data-theme="light"] .breakdown-table{border:1.5px solid rgba(0,0,0,0.1)}
+[data-theme="light"] .salary-list{border:1.5px solid rgba(0,0,0,0.1)}
+[data-theme="light"] .tkpi{border:1px solid rgba(0,0,0,0.08)}
+[data-theme="light"] .pstat{border:1px solid rgba(0,0,0,0.08)}
+@keyframes popIn{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes fadeOutDown{0%{opacity:1;transform:translateY(0) scale(1)}60%{opacity:.3;transform:translateY(8px) scale(.98)}100%{opacity:0;transform:translateY(16px) scale(.96)}}
+@keyframes confirmFadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.set-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.set-lbl{font-size:11px;color:var(--text2);flex:1}
+.set-inp-wrap{display:flex;align-items:center;gap:4px;background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:4px 10px}
+.set-peso{font-family:'Barlow Condensed',sans-serif;font-size:14px;color:var(--text3)}
+.set-inp{background:none;border:none;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--sage-b);width:100px;text-align:right;outline:none}
+</style>
+<link rel="manifest" href="data:application/json,{
+  &quot;name&quot;: &quot;Momenta Finance&quot;,
+  &quot;short_name&quot;: &quot;Momenta&quot;,
+  &quot;start_url&quot;: &quot;.&quot;,
+  &quot;display&quot;: &quot;standalone&quot;,
+  &quot;background_color&quot;: &quot;#0e0f14&quot;,
+  &quot;theme_color&quot;: &quot;#0e0f14&quot;,
+  &quot;icons&quot;: [{&quot;src&quot;: &quot;icon.png&quot;, &quot;sizes&quot;: &quot;192x192&quot;}]
+}">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Momenta Finance">
+<meta name="theme-color" content="#0e0f14">
+</head>
+<body>
+<div class="app">
+
+<!-- USER SELECT -->
+<div class="screen active" id="screen-user">
+  <div class="sb"></div>
+  <div class="usel">
+    <div>
+      <div class="usel-logo">Momenta<br>Finance</div>
+      <div class="usel-sub" style="margin-top:6px">Sino ka ngayon?</div>
+    </div>
+    <div class="ubtns">
+      <div class="ubtn" onclick="selectUser('Almira','A','a','Co-Owner · Creative')" ontouchend="selectUser('Almira','A','a','Co-Owner · Creative')" style="cursor:pointer;-webkit-tap-highlight-color:rgba(149,184,128,0.2)">
+        <div class="uav a">A</div>
+        <div><div class="uname">Almira</div><div class="urole">Co-Owner · Creative</div></div>
+      </div>
+      <div class="ubtn" onclick="selectUser('Joyce','J','j','Co-Owner · Operations')" ontouchend="selectUser('Joyce','J','j','Co-Owner · Operations')" style="cursor:pointer;-webkit-tap-highlight-color:rgba(88,152,200,0.2)">
+        <div class="uav j">J</div>
+        <div><div class="uname">Joyce</div><div class="urole">Co-Owner · Operations</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOME -->
+<div class="screen" id="screen-home">
+  <div class="sb"></div>
+  <div class="offline-banner" id="offline-banner">
+    <div class="offline-dot"></div>
+    <div class="offline-text">Offline Mode</div>
+    <div class="offline-count" id="offline-count">0 entries queued</div>
+  </div>
+  <div class="topbar">
+    <div><div class="t-brand">Momenta</div><div class="t-sub">Finance OS</div></div>
+    <div class="t-right">
+      <div class="icon-btn" id="theme-btn" onclick="toggleTheme()">🌙</div>
+      <div class="av-btn" id="av-btn" onclick="showScreen('screen-user')">A</div>
+    </div>
+  </div>
+  <div class="scroll">
+    <!-- NET + RUNWAY -->
+    <div class="net-hero">
+      <div class="net-period">Total Available Cash · All Accounts</div>
+      <div class="net-val" id="runway-total" style="cursor:default">₱212,400</div>
+      <div class="net-sub" id="runway-sub">BDO + GCash + Cash combined</div>
+      <div class="runway-row">
+        <div>
+          <div class="runway-label">Cash Runway</div>
+          <div style="font-size:9px;color:var(--text3);margin-top:2px">₱72k/mo estimated burn</div>
+          <div style="font-size:9px;color:var(--text3);margin-top:1px">Net income: <span style="color:var(--green);font-weight:700">₱1,328,253</span></div>
+        </div>
+        <div style="text-align:right">
+          <div class="runway-val" id="runway-months">~2 months</div>
+          <div style="font-size:9px;color:var(--text3);margin-top:1px" id="runway-calc">Update balances in Settings</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUICK LOG -->
+    <div class="quick-log-row">
+      <button class="ql-btn ql-income" onclick="openEntry('income',null)">+ Income</button>
+      <button class="ql-btn ql-expense" onclick="openEntry('expense',null)">− Expense</button>
+    </div>
+
+    <!-- STANDING DEBTS -->
+    <div class="sec">Standing Debts</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">
+      <div class="debt-cat red" style="margin-bottom:0">Business Obligations</div>
+      <div style="display:flex;gap:5px">
+        <button onclick="openDeleteLoanPicker()" style="padding:4px 9px;background:rgba(217,96,96,0.08);border:1px solid rgba(217,96,96,0.2);border-radius:6px;color:rgba(217,96,96,0.7);font-size:9px;font-weight:700;cursor:pointer">Delete</button>
+        <button onclick="openAddLoan()" style="padding:4px 9px;background:rgba(217,96,96,0.12);border:1px solid rgba(217,96,96,0.3);border-radius:6px;color:var(--red);font-size:9px;font-weight:700;cursor:pointer;letter-spacing:.5px">+ Add</button>
+      </div>
+    </div>
+    <div class="debt-grid-2" id="biz-obligations-grid">
+      <div class="dc-wrap">
+        <div class="dc dc-shara" onclick="toggleDebt(this)">
+          <div class="dc-hdr"><div class="dc-tag">LOAN</div><div class="dc-arrow">▼</div></div>
+          <div class="dc-lbl">LOAN TO SHARA</div>
+          <div class="dc-amount">₱550,000</div>
+          <div class="dc-recent" id="shara-recent-txt">Last: Tuition payment</div>
+          <div class="dc-log-btn" onclick="event.stopPropagation();openContextEntry('shara-payment')">Log Payment →</div>
+        </div>
+        <div class="dc-expand">
+          <div class="dtx"><div class="dtx-l"><div class="dtx-desc">Principal (Jun 2025)</div><div class="dtx-date">Jun 2025</div></div><div class="dtx-amt n">₱600,000</div></div>
+          <div class="dtx"><div class="dtx-l"><div class="dtx-desc">Interest 1yr + 3mos ext.</div></div><div class="dtx-amt n">₱75,000</div></div>
+          <div class="dsub-lbl">Payments — ₱125,000</div>
+          <div class="dtx"><div class="dtx-l"><div class="dtx-desc">GCash + Laptop + DJI</div><div class="dtx-date">2025</div></div><div class="dtx-amt p">−₱75,000</div></div>
+          <div class="dtx"><div class="dtx-l"><div class="dtx-desc">April enrollment</div><div class="dtx-date">Apr 2026</div></div><div class="dtx-amt p">−₱50,000</div></div>
+          <div class="dtx"><div class="dtx-l"><div class="dtx-desc">Tuition payment</div></div><div class="dtx-amt p">−₱50,000</div></div>
+          <div id="shara-history"></div>
+          <div class="dtotal"><div class="dtotal-l">Remaining</div><div class="dtotal-v" style="color:var(--red)" id="shara-balance-display">₱550,000</div></div>
+        </div>
+      </div>
+      <div class="dc-wrap">
+        <div class="dc dc-almira-debt" onclick="toggleDebt(this)">
+          <div class="dc-hdr"><div class="dc-tag">OWES TO ALMIRA</div><div class="dc-arrow">▼</div></div>
+          <div class="dc-lbl">DRAWS</div>
+          <div class="dc-amount">₱321,458</div>
+          <div class="dc-recent">Last: March 2026 Split</div>
+          <div class="dc-log-btn" onclick="event.stopPropagation();openContextEntry('almira-payment')">Log Payment →</div>
+        </div>
+        <div class="dc-expand">
+          <div class="dtx"><div class="dtx-l"><div class="dtx-desc">Competition Award</div><div class="dtx-date">2025</div></div><div class="dtx-amt p">+₱150,000</div></div>
+          <div class="dtx"><div class="dtx-l"><div class="dtx-desc">2025 Owner Split</div></div><div class="dtx-amt p">+₱19,700</div></div>
+          <div class="dtx"><div class="dtx-l"><div class="dtx-desc">March 2026 Split</div><div class="dtx-date">March 2026</div></div><div class="dtx-amt p">+₱151,758</div></div>
+          <div id="almira-payment-history"></div>
+          <div class="dtotal"><div class="dtotal-l">Dapat matanggap</div><div class="dtotal-v" style="color:var(--red)" id="almira-owed-display">₱321,458</div></div>
+        </div>
+      </div>
+    </div>
+    <!-- Dynamic loan cards -->
+    <div id="custom-loans"></div>
+
+    <div class="debt-cat orange">Owner Draws</div>
+    <div class="dc-full-wrap">
+      <div class="dc dc-shared" onclick="toggleDebt(this)" style="border-radius:12px">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between">
+          <div>
+            <div class="dc-tag">SHARED</div>
+            <div style="margin-top:10px">
+              <div class="dc-lbl">SHARED EXPENSE</div>
+              <div class="dc-amount" id="shared-draw-amt">₱197,262</div>
+              <div class="dc-recent">Both owners · 50/50</div>
+              <div class="dc-log-btn" onclick="event.stopPropagation();openContextEntry('shared-draw')">Log Draw →</div>
+            </div>
+          </div>
+          <div class="dc-arrow" style="margin-top:4px">▼</div>
+        </div>
+      </div>
+      <div class="dc-expand">
+        <div class="dtx"><div class="dtx-l"><div class="dtx-desc">Apr–Sep 2025</div></div><div class="dtx-amt n">₱57,113</div></div>
+        <div class="dtx"><div class="dtx-l"><div class="dtx-desc">Oct 2025–Mar 2026</div></div><div class="dtx-amt n">₱140,149</div></div>
+        <div id="shared-draw-history"></div>
+        <div class="dtotal"><div class="dtotal-l">Total shared</div><div class="dtotal-v" style="color:var(--orange)" id="shared-balance-display">₱197,262</div></div>
+      </div>
+    </div>
+
+    <div class="debt-cat blue">Personal</div>
+    <div class="debt-grid-personal">
+      <div class="dc-wrap">
+        <div class="dc dc-personal-j" onclick="toggleDebt(this)">
+          <div class="dc-hdr"><div class="dc-tag">JOYCE</div><div class="dc-arrow">▼</div></div>
+          <div class="dc-entry">
+            <div class="dc-entry-lbl">UTANG SA BUSINESS</div>
+            <div class="dc-entry-amt" id="joyce-biz-bal">₱175,087</div>
+            <div class="dc-entry-recent">Last: Oct–Mar draws</div>
+            <div class="dc-log-btn" onclick="event.stopPropagation();openContextEntry('joyce-draw')" style="margin-top:7px">Log Draw →</div>
+          </div>
+          <div class="dc-divider"></div>
+          <div class="dc-entry">
+            <div class="dc-entry-lbl">PERSONAL KAY ALMIRA</div>
+            <div class="dc-entry-amt" id="joyce-personal-bal">₱25,600</div>
+            <div class="dc-entry-recent">Pwedeng magbayad o madagdagan</div>
+            <div class="dc-log-btn" onclick="event.stopPropagation();openContextEntry('joyce-personal-log')" style="margin-top:7px">Log Payment →</div>
+          </div>
+        </div>
+        <div class="dc-expand">
+          <div class="dsub-lbl">Utang sa Business</div>
+          <div class="dtx"><div class="dtx-l"><div class="dtx-desc">Previous draws</div></div><div class="dtx-amt n">₱149,284</div></div>
+          <div class="dtx"><div class="dtx-l"><div class="dtx-desc">Apr–Sep 2025</div></div><div class="dtx-amt n">₱147,475</div></div>
+          <div class="dtx"><div class="dtx-l"><div class="dtx-desc">Oct 2025–Mar 2026</div></div><div class="dtx-amt n">₱178,328</div></div>
+          <div class="dtx"><div class="dtx-l"><div class="dtx-desc">Mar 2026 Split deducted</div></div><div class="dtx-amt p">−₱300,000</div></div>
+          <div id="joyce-draw-history"></div>
+          <div class="dtotal"><div class="dtotal-l">Net utang sa business</div><div class="dtotal-v" style="color:var(--red)" id="joyce-biz-display">₱175,087</div></div>
+          <div class="dsub-lbl">Personal kay Almira</div>
+          <div class="dtx"><div class="dtx-l"><div class="dtx-desc">Personal loan</div></div><div class="dtx-amt n" id="joyce-personal-display">₱25,600</div></div>
+          <div id="joyce-personal-history"></div>
+        </div>
+      </div>
+      <div class="dc-wrap">
+        <div class="dc dc-personal-a" onclick="toggleDebt(this)">
+          <div class="dc-hdr"><div class="dc-tag">ALMIRA</div><div class="dc-arrow">▼</div></div>
+          <div class="dc-entry-lbl">UTANG SA BUSINESS</div>
+          <div class="dc-amount" id="almira-draw-amt">₱0.00</div>
+          <div class="dc-recent" id="almira-draw-recent">Walang current draws</div>
+          <div class="dc-log-btn" onclick="event.stopPropagation();openContextEntry('almira-draw')" style="margin-top:10px">Log Draw →</div>
+        </div>
+        <div class="dc-expand">
+          <div id="almira-draw-list"><div style="padding:10px 0;font-size:10px;color:var(--text3);text-align:center">Walang draws ngayon</div></div>
+          <div class="dtotal"><div class="dtotal-l">Current draws</div><div class="dtotal-v" style="color:var(--blue)" id="almira-draw-total">₱0.00</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACCOUNTS -->
+    <div class="sec">Accounts</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+
+      <div class="acc-tag acc-navy" style="padding:13px;min-height:130px;display:flex;flex-direction:column;justify-content:space-between">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between">
+          <div><div class="acc-name">BDO Business</div><div class="acc-type" style="margin-top:2px">Checking</div></div>
+          <div onclick="openTransfer('BDO Business')" style="padding:3px 8px;background:rgba(255,255,255,0.12);border-radius:5px;font-size:7px;font-weight:700;color:rgba(255,255,255,0.7);cursor:pointer;position:relative;z-index:2">Transfer</div>
+        </div>
+        <div>
+          <div class="acc-bal" id="bal-bdo" style="font-size:19px;margin-bottom:6px">₱98,200</div>
+          <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:6px;display:flex;flex-direction:column;gap:3px">
+            <div style="display:flex;justify-content:space-between;font-size:8px"><span style="color:rgba(255,255,255,0.4)">School</span><span style="color:rgba(255,255,255,0.7);font-family:'Barlow Condensed',sans-serif;font-weight:600" id="bdo-school">—</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:8px"><span style="color:rgba(255,255,255,0.4)">Studio</span><span style="color:rgba(255,255,255,0.7);font-family:'Barlow Condensed',sans-serif;font-weight:600" id="bdo-studio">—</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:8px"><span style="color:rgba(255,255,255,0.4)">Events</span><span style="color:rgba(255,255,255,0.7);font-family:'Barlow Condensed',sans-serif;font-weight:600" id="bdo-events">—</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:8px"><span style="color:rgba(255,255,255,0.3)">General</span><span style="color:rgba(255,255,255,0.5);font-family:'Barlow Condensed',sans-serif;font-weight:600" id="bdo-general">—</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-tag acc-teal" style="padding:13px;min-height:130px;display:flex;flex-direction:column;justify-content:space-between">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between">
+          <div><div class="acc-name">GCash Almira</div><div class="acc-type" style="margin-top:2px">Wallet</div></div>
+          <div onclick="openTransfer('GCash Almira')" style="padding:3px 8px;background:rgba(255,255,255,0.12);border-radius:5px;font-size:7px;font-weight:700;color:rgba(255,255,255,0.7);cursor:pointer;position:relative;z-index:2">Transfer</div>
+        </div>
+        <div>
+          <div class="acc-bal" id="bal-gcash-a" style="font-size:19px;margin-bottom:6px">₱42,100</div>
+          <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:6px;display:flex;flex-direction:column;gap:3px">
+            <div style="display:flex;justify-content:space-between;font-size:8px"><span style="color:rgba(255,255,255,0.4)">School</span><span style="color:rgba(255,255,255,0.7);font-family:'Barlow Condensed',sans-serif;font-weight:600" id="gcasha-school">—</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:8px"><span style="color:rgba(255,255,255,0.4)">Studio</span><span style="color:rgba(255,255,255,0.7);font-family:'Barlow Condensed',sans-serif;font-weight:600" id="gcasha-studio">—</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:8px"><span style="color:rgba(255,255,255,0.4)">Events</span><span style="color:rgba(255,255,255,0.7);font-family:'Barlow Condensed',sans-serif;font-weight:600" id="gcasha-events">—</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:8px"><span style="color:rgba(255,255,255,0.3)">General</span><span style="color:rgba(255,255,255,0.5);font-family:'Barlow Condensed',sans-serif;font-weight:600" id="gcasha-general">—</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-tag acc-sky" style="padding:13px;min-height:130px;display:flex;flex-direction:column;justify-content:space-between">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between">
+          <div><div class="acc-name">GCash Joyce</div><div class="acc-type" style="margin-top:2px">Wallet</div></div>
+          <div onclick="openTransfer('GCash Joyce')" style="padding:3px 8px;background:rgba(255,255,255,0.12);border-radius:5px;font-size:7px;font-weight:700;color:rgba(255,255,255,0.7);cursor:pointer;position:relative;z-index:2">Transfer</div>
+        </div>
+        <div>
+          <div class="acc-bal" id="bal-gcash-j" style="font-size:19px;margin-bottom:6px">₱38,500</div>
+          <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:6px;display:flex;flex-direction:column;gap:3px">
+            <div style="display:flex;justify-content:space-between;font-size:8px"><span style="color:rgba(255,255,255,0.4)">School</span><span style="color:rgba(255,255,255,0.7);font-family:'Barlow Condensed',sans-serif;font-weight:600" id="gcashj-school">—</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:8px"><span style="color:rgba(255,255,255,0.4)">Studio</span><span style="color:rgba(255,255,255,0.7);font-family:'Barlow Condensed',sans-serif;font-weight:600" id="gcashj-studio">—</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:8px"><span style="color:rgba(255,255,255,0.4)">Events</span><span style="color:rgba(255,255,255,0.7);font-family:'Barlow Condensed',sans-serif;font-weight:600" id="gcashj-events">—</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:8px"><span style="color:rgba(255,255,255,0.3)">General</span><span style="color:rgba(255,255,255,0.5);font-family:'Barlow Condensed',sans-serif;font-weight:600" id="gcashj-general">—</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-tag acc-olive" style="padding:13px;min-height:130px;display:flex;flex-direction:column;justify-content:space-between">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between">
+          <div><div class="acc-name">Cash</div><div class="acc-type" style="margin-top:2px">On Hand</div></div>
+          <div onclick="openTransfer('Cash')" style="padding:3px 8px;background:rgba(255,255,255,0.12);border-radius:5px;font-size:7px;font-weight:700;color:rgba(255,255,255,0.7);cursor:pointer;position:relative;z-index:2">Transfer</div>
+        </div>
+        <div>
+          <div class="acc-bal" id="bal-cash" style="font-size:19px;margin-bottom:6px">₱33,600</div>
+          <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:6px;display:flex;flex-direction:column;gap:3px">
+            <div style="display:flex;justify-content:space-between;font-size:8px"><span style="color:rgba(255,255,255,0.4)">School</span><span style="color:rgba(255,255,255,0.7);font-family:'Barlow Condensed',sans-serif;font-weight:600" id="cash-school">—</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:8px"><span style="color:rgba(255,255,255,0.4)">Studio</span><span style="color:rgba(255,255,255,0.7);font-family:'Barlow Condensed',sans-serif;font-weight:600" id="cash-studio">—</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:8px"><span style="color:rgba(255,255,255,0.4)">Events</span><span style="color:rgba(255,255,255,0.7);font-family:'Barlow Condensed',sans-serif;font-weight:600" id="cash-events">—</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:8px"><span style="color:rgba(255,255,255,0.3)">General</span><span style="color:rgba(255,255,255,0.5);font-family:'Barlow Condensed',sans-serif;font-weight:600" id="cash-general">—</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- STUDIO CASH BOX — separate full-width card with dropdown -->
+    <div class="sec">Studio Cash Box</div>
+    <div style="margin-bottom:16px">
+      <div style="background:linear-gradient(135deg,#0e2030,#162840);border-radius:14px;padding:14px;border:1px solid rgba(88,152,200,0.2);cursor:pointer" onclick="toggleCashBox(this)" id="cashbox-card">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between">
+          <div>
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:rgba(88,152,200,0.7)">Studio Cash Box</div>
+            <div style="font-size:9px;color:rgba(255,255,255,0.3);margin-top:2px">Pera nasa studio, hindi pa nililipat</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:700;color:var(--blue)" id="studio-cashbox-amt2">₱0</div>
+            <div style="font-size:9px;color:rgba(88,152,200,0.5);transition:transform .3s" id="cashbox-arrow">▼</div>
+          </div>
+        </div>
+      </div>
+      <!-- Dropdown -->
+      <div id="cashbox-dropdown" style="background:var(--card);border-radius:0 0 12px 12px;max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.16,1,.3,1)">
+        <div id="cashbox-entries" style="padding:12px 14px 4px"></div>
+        <div style="padding:0 14px 14px">
+          <button onclick="openCashBoxTransfer()" style="width:100%;padding:8px;background:rgba(88,152,200,0.15);border:1.5px solid rgba(88,152,200,0.3);border-radius:8px;color:var(--blue);font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.5px;cursor:pointer">↑ Transfer to Account</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- POOL BALANCES -->
+    <div class="sec">Pool Balances</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px">
+      <div style="background:var(--card);border-radius:10px;padding:11px;border-top:2px solid var(--sage)">
+        <div style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)">School</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;margin-top:3px;line-height:1" id="pool-school-bal">—</div>
+        <div style="font-size:8px;color:var(--text3);margin-top:4px">Earned</div>
+        <div style="font-size:10px;font-weight:700;color:var(--green)" id="pool-school-earned">—</div>
+      </div>
+      <div style="background:var(--card);border-radius:10px;padding:11px;border-top:2px solid var(--blue)">
+        <div style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)">Studio</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;margin-top:3px;line-height:1" id="pool-studio-bal">—</div>
+        <div style="font-size:8px;color:var(--text3);margin-top:4px">Earned</div>
+        <div style="font-size:10px;font-weight:700;color:var(--green)" id="pool-studio-earned">—</div>
+      </div>
+      <div style="background:var(--card);border-radius:10px;padding:11px;border-top:2px solid var(--purple)">
+        <div style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)">Events</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;margin-top:3px;line-height:1" id="pool-events-bal">—</div>
+        <div style="font-size:8px;color:var(--text3);margin-top:4px">Earned</div>
+        <div style="font-size:10px;font-weight:700;color:var(--green)" id="pool-events-earned">—</div>
+      </div>
+    </div>
+
+    <!-- POOL TRANSFER HISTORY + BUTTON -->
+    <div id="pool-transfer-history" style="margin-bottom:16px"></div>
+
+    <!-- RECENT TX -->
+    <div class="sec">Recent</div>
+    <div id="home-recent"><div style="background:var(--card);border-radius:12px;padding:20px;text-align:center;font-size:11px;color:var(--text3)">Wala pang entries</div></div>
+  </div>
+  <div class="bnav" id="home-nav">
+    <button class="ni on" onclick="switchNav(this,'screen-home',0)"><span class="ni-icon">⌂</span><span class="ni-lbl">Home</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-school',1)"><span class="ni-icon">🏫</span><span class="ni-lbl">School</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-studio',2)"><span class="ni-icon">🎬</span><span class="ni-lbl">Studio</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-events',3)"><span class="ni-icon">📷</span><span class="ni-lbl">Events</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-log',4)"><span class="ni-icon">📋</span><span class="ni-lbl">Log</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-statement',5)"><span class="ni-icon">📊</span><span class="ni-lbl">Report</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-settings',6)"><span class="ni-icon">⚙</span><span class="ni-lbl">Settings</span><div class="ni-dot"></div></button>
+  </div>
+</div>
+
+<!-- SCHOOL -->
+<div class="screen" id="screen-school">
+  <div class="sb"></div>
+  <div class="list-hdr">
+    <div><div class="lh-title">School Partnership</div><div class="lh-sub">Class · Grad · ID Picture</div></div>
+    <div style="display:flex;gap:6px">
+      <button class="add-btn2" style="background:rgba(217,96,96,0.75)" onclick="toggleBulkDelete()">Delete</button>
+      <button class="add-btn2" onclick="openModal('school')">+ Add</button>
+    </div>
+  </div>
+  <!-- Bulk delete bar -->
+  <div id="bulk-delete-bar" style="display:none;padding:0 18px 10px;gap:8px;align-items:center">
+    <span style="font-size:10px;font-weight:600;color:var(--text3);flex:1" id="bulk-count">0 selected</span>
+    <button onclick="cancelBulkDelete()" style="padding:6px 12px;background:none;border:1px solid var(--line);border-radius:8px;font-size:10px;font-weight:600;color:var(--text3);cursor:pointer">Cancel</button>
+    <button onclick="executeBulkDelete()" style="padding:6px 14px;background:rgba(217,96,96,0.2);border:1.5px solid rgba(217,96,96,0.4);border-radius:8px;font-size:11px;font-weight:700;color:var(--red);cursor:pointer;font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px">DELETE SELECTED</button>
+  </div>
+  <!-- Service filter -->
+  <div style="display:flex;gap:6px;padding:0 18px 10px;overflow-x:auto" id="school-service-filter">
+    <div class="filter-chip on" onclick="setSchoolFilter('all',this)">All</div>
+    <div class="filter-chip" onclick="setSchoolFilter('Class Picture',this)">Class Picture</div>
+    <div class="filter-chip" onclick="setSchoolFilter('Grad Picture',this)">Grad Picture</div>
+    <div class="filter-chip" onclick="setSchoolFilter('ID Picture',this)">ID Picture</div>
+  </div>
+  <div class="scroll" style="padding-top:0">
+    <div id="service-mini-dash" style="display:none;padding:0 0 2px"></div>
+    <div class="tab-dash" id="school-overall-dash">
+      <div class="tab-dash-title">School Summary</div>
+      <div class="tab-kpis" id="school-kpis">
+        <div class="tkpi">
+          <div class="tkpi-l">Standing</div>
+          <div class="tkpi-v i" id="school-standing-lbl">₱1.33M</div>
+          <div style="font-size:8px;color:var(--text3);margin-top:3px">Total Earned: <span id="school-earned-lbl" style="font-weight:600;color:var(--text2)">₱2.33M</span></div>
+        </div>
+        <div class="tkpi"><div class="tkpi-l">Expense</div><div class="tkpi-v e" id="school-exp-lbl">₱1.00M</div></div>
+        <div class="tkpi"><div class="tkpi-l">Net</div><div class="tkpi-v n">₱1.33M</div></div>
+      </div>
+      <div class="tab-quick">
+        <button class="tq-btn tq-inc" onclick="openEntry('income','School')">+ Log Income</button>
+        <button class="tq-btn tq-exp" onclick="openEntry('expense','School')">− Log Expense</button>
+      </div>
+    </div>
+    <div id="school-breakdown-sec">
+    <div class="sec">Expense Breakdown</div>
+    <div style="display:flex;gap:6px;margin-bottom:8px;overflow-x:auto;padding-bottom:2px" id="breakdown-filters">
+      <div class="filter-chip on" onclick="setBreakdownFilter('all',this)">All Time</div>
+      <div class="filter-chip" onclick="setBreakdownFilter('month',this)">This Month</div>
+      <div class="filter-chip" onclick="setBreakdownFilter('3months',this)">Last 3 Months</div>
+    </div>
+    <div class="breakdown-table" id="school-expense-breakdown">
+      <div class="bt-hdr"><div>Category</div><div>This Month</div><div>Total</div></div>
+      <div style="padding:16px;text-align:center;font-size:10px;color:var(--text3)">Log expenses to see breakdown</div>
+    </div>
+    </div><!-- /school-breakdown-sec -->
+
+    <div class="sec">Projects</div>
+    <div id="school-list"></div>
+  </div>
+  <div class="bnav">
+    <button class="ni" onclick="switchNav(this,'screen-home',0)"><span class="ni-icon">⌂</span><span class="ni-lbl">Home</span><div class="ni-dot"></div></button>
+    <button class="ni on" onclick="switchNav(this,'screen-school',1)"><span class="ni-icon">🏫</span><span class="ni-lbl">School</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-studio',2)"><span class="ni-icon">🎬</span><span class="ni-lbl">Studio</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-events',3)"><span class="ni-icon">📷</span><span class="ni-lbl">Events</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-log',4)"><span class="ni-icon">📋</span><span class="ni-lbl">Log</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-statement',5)"><span class="ni-icon">📊</span><span class="ni-lbl">Report</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-settings',6)"><span class="ni-icon">⚙</span><span class="ni-lbl">Settings</span><div class="ni-dot"></div></button>
+  </div>
+</div>
+
+<!-- STUDIO -->
+<div class="screen" id="screen-studio">
+  <div class="sb"></div>
+  <div class="list-hdr">
+    <div><div class="lh-title">Studio</div><div class="lh-sub">Daily Ops · Shoots · Quick Prints</div></div>
+  </div>
+  <div class="scroll" style="padding-top:0">
+
+    <!-- MONTH NAV + MONTHLY SUMMARY -->
+    <div class="tab-dash" id="studio-dash">
+      <div class="studio-month-nav">
+        <div class="month-arr" onclick="changeStudioMonth(-1)">‹</div>
+        <div class="month-lbl" id="studio-month-lbl">May 2025</div>
+        <div class="month-arr" onclick="changeStudioMonth(1)">›</div>
+      </div>
+      <div class="tab-kpis" style="margin-bottom:10px">
+        <div class="tkpi">
+          <div class="tkpi-l">Standing</div>
+          <div class="tkpi-v i" id="studio-standing">—</div>
+          <div style="font-size:8px;color:var(--text3);margin-top:3px">Total Earned: <span id="studio-inc" style="font-weight:600;color:var(--text2)">—</span></div>
+        </div>
+        <div class="tkpi"><div class="tkpi-l">Expenses</div><div class="tkpi-v e" id="studio-exp">—</div></div>
+        <div class="tkpi"><div class="tkpi-l">Net</div><div class="tkpi-v n" id="studio-net">—</div></div>
+      </div>
+
+      <!-- BY SERVICE with log buttons — distinct card style -->
+      <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:7px">Income by Service</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px" id="studio-services">
+
+        <div style="background:linear-gradient(135deg,#0e2218,#142e20);border-radius:12px;padding:12px;border:1px solid rgba(92,184,122,0.15);position:relative;overflow:hidden">
+          <div style="position:absolute;bottom:-16px;right:-16px;width:56px;height:56px;border-radius:50%;background:rgba(92,184,122,0.06)"></div>
+          <div style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:rgba(92,184,122,0.5);margin-bottom:6px">Self Shoot</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--green);line-height:1;margin-bottom:8px" id="svc-self">—</div>
+          <button onclick="studioLogService('Self Shoot')" style="width:100%;padding:5px;background:rgba(92,184,122,0.12);border:1px solid rgba(92,184,122,0.25);border-radius:6px;color:var(--green);font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.5px">+ Log</button>
+        </div>
+
+        <div style="background:linear-gradient(135deg,#1a1a0e,#28260e);border-radius:12px;padding:12px;border:1px solid rgba(212,164,53,0.15);position:relative;overflow:hidden">
+          <div style="position:absolute;bottom:-16px;right:-16px;width:56px;height:56px;border-radius:50%;background:rgba(212,164,53,0.06)"></div>
+          <div style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:rgba(212,164,53,0.5);margin-bottom:6px">Grad Shoot</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--yellow);line-height:1;margin-bottom:8px" id="svc-grad">—</div>
+          <button onclick="studioLogService('Grad Shoot')" style="width:100%;padding:5px;background:rgba(212,164,53,0.12);border:1px solid rgba(212,164,53,0.25);border-radius:6px;color:var(--yellow);font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.5px">+ Log</button>
+        </div>
+
+        <div style="background:linear-gradient(135deg,#100e1e,#18142e);border-radius:12px;padding:12px;border:1px solid rgba(136,120,200,0.15);position:relative;overflow:hidden">
+          <div style="position:absolute;bottom:-16px;right:-16px;width:56px;height:56px;border-radius:50%;background:rgba(136,120,200,0.06)"></div>
+          <div style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:rgba(136,120,200,0.5);margin-bottom:6px">Theme Shoot</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--purple);line-height:1;margin-bottom:8px" id="svc-theme">—</div>
+          <button onclick="studioLogService('Theme Shoot')" style="width:100%;padding:5px;background:rgba(136,120,200,0.12);border:1px solid rgba(136,120,200,0.25);border-radius:6px;color:var(--purple);font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.5px">+ Log</button>
+        </div>
+
+        <div style="background:linear-gradient(135deg,#0e1820,#142030);border-radius:12px;padding:12px;border:1px solid rgba(88,152,200,0.15);position:relative;overflow:hidden">
+          <div style="position:absolute;bottom:-16px;right:-16px;width:56px;height:56px;border-radius:50%;background:rgba(88,152,200,0.06)"></div>
+          <div style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:rgba(88,152,200,0.5);margin-bottom:6px">Quick Prints</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--blue);line-height:1;margin-bottom:8px" id="svc-prints">—</div>
+          <button onclick="studioLogService('Quick Prints')" style="width:100%;padding:5px;background:rgba(88,152,200,0.12);border:1px solid rgba(88,152,200,0.25);border-radius:6px;color:var(--blue);font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.5px">+ Log</button>
+        </div>
+
+      </div>
+
+      <!-- Expense log button -->
+      <div style="margin-top:8px">
+        <button onclick="studioLogEntry('expense')" style="width:100%;padding:9px;background:rgba(217,96,96,0.1);border:1.5px solid rgba(217,96,96,0.25);border-radius:8px;color:var(--red);font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.5px;cursor:pointer">− Log Expense</button>
+      </div>
+    </div>
+
+    <!-- FIXED EXPENSES -->
+    <div class="sec">Fixed Monthly Expenses</div>
+    <div class="breakdown-table" id="studio-fixed-exp">
+      <div class="bt-hdr"><div>Item</div><div>Amount</div><div></div></div>
+      <div class="bt-row"><div class="bt-name">Rent</div><div class="bt-month" id="fixed-rent">₱25,000</div><div class="bt-total" style="color:var(--text3);font-size:9px">Fixed</div></div>
+      <div class="bt-row"><div class="bt-name">Electricity</div><div class="bt-month" id="fixed-elec">—</div><div class="bt-total" style="color:var(--text3);font-size:9px">Monthly</div></div>
+      <div class="bt-row"><div class="bt-name">Internet</div><div class="bt-month" id="fixed-net">—</div><div class="bt-total" style="color:var(--text3);font-size:9px">Monthly</div></div>
+      <div class="bt-row"><div class="bt-name">Water</div><div class="bt-month" id="fixed-water">—</div><div class="bt-total" style="color:var(--text3);font-size:9px">Monthly</div></div>
+    </div>
+
+    <!-- WEEKLY BREAKDOWN -->
+    <div class="sec">Weekly Summary</div>
+    <div id="studio-weekly">
+      <div style="background:var(--card);border-radius:12px;padding:16px;text-align:center;font-size:11px;color:var(--text3)">Log entries to see weekly summary</div>
+    </div>
+
+    <!-- TRANSACTION LOG FOR THIS MONTH -->
+    <div class="sec">This Month's Entries</div>
+    <div id="studio-log">
+      <div style="background:var(--card);border-radius:12px;padding:16px;text-align:center;font-size:11px;color:var(--text3)">Wala pang entries ngayong buwan</div>
+    </div>
+
+  </div>
+  <div class="bnav">
+    <button class="ni" onclick="switchNav(this,'screen-home',0)"><span class="ni-icon">⌂</span><span class="ni-lbl">Home</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-school',1)"><span class="ni-icon">🏫</span><span class="ni-lbl">School</span><div class="ni-dot"></div></button>
+    <button class="ni on" onclick="switchNav(this,'screen-studio',2)"><span class="ni-icon">🎬</span><span class="ni-lbl">Studio</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-events',3)"><span class="ni-icon">📷</span><span class="ni-lbl">Events</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-log',4)"><span class="ni-icon">📋</span><span class="ni-lbl">Log</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-statement',5)"><span class="ni-icon">📊</span><span class="ni-lbl">Report</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-settings',6)"><span class="ni-icon">⚙</span><span class="ni-lbl">Settings</span><div class="ni-dot"></div></button>
+  </div>
+</div>
+
+<!-- EVENTS -->
+<div class="screen" id="screen-events">
+  <div class="sb"></div>
+  <div class="list-hdr">
+    <div><div class="lh-title">Events</div><div class="lh-sub">Wedding · Coverage · Bulk Orders</div></div>
+    <button class="add-btn2" onclick="openModal('event')">+ Add Event</button>
+  </div>
+  <div class="scroll" style="padding-top:0">
+    <div class="tab-dash">
+      <div class="tab-kpis">
+        <div class="tkpi">
+          <div class="tkpi-l">Standing</div>
+          <div class="tkpi-v i" id="events-standing">—</div>
+          <div style="font-size:8px;color:var(--text3);margin-top:3px">Total Earned: <span id="events-earned" style="font-weight:600;color:var(--text2)">—</span></div>
+        </div>
+        <div class="tkpi"><div class="tkpi-l">Expense</div><div class="tkpi-v e" id="events-exp">—</div></div>
+        <div class="tkpi"><div class="tkpi-l">Net</div><div class="tkpi-v n" id="events-net">—</div></div>
+      </div>
+      <div class="tab-quick" style="margin-top:10px">
+        <button class="tq-btn tq-inc" onclick="openEntry('income','Events')">+ Log Income</button>
+        <button class="tq-btn tq-exp" onclick="openEntry('expense','Events')">− Log Expense</button>
+      </div>
+    </div>
+    <div class="sec">Event Projects</div>
+    <div id="events-list"><div style="background:var(--card);border-radius:12px;padding:20px;text-align:center;font-size:11px;color:var(--text3)">Wala pang events — mag-add ng bago</div></div>
+  </div>
+  <div class="bnav">
+    <button class="ni" onclick="switchNav(this,'screen-home',0)"><span class="ni-icon">⌂</span><span class="ni-lbl">Home</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-school',1)"><span class="ni-icon">🏫</span><span class="ni-lbl">School</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-studio',2)"><span class="ni-icon">🎬</span><span class="ni-lbl">Studio</span><div class="ni-dot"></div></button>
+    <button class="ni on" onclick="switchNav(this,'screen-events',3)"><span class="ni-icon">📷</span><span class="ni-lbl">Events</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-log',4)"><span class="ni-icon">📋</span><span class="ni-lbl">Log</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-statement',5)"><span class="ni-icon">📊</span><span class="ni-lbl">Report</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-settings',6)"><span class="ni-icon">⚙</span><span class="ni-lbl">Settings</span><div class="ni-dot"></div></button>
+  </div>
+</div>
+
+<!-- MASTER LOG -->
+<div class="screen" id="screen-log">
+  <div class="sb"></div>
+  <div class="list-hdr" style="padding-bottom:8px">
+    <div><div class="lh-title">Transaction Log</div><div class="lh-sub">All entries · Master record</div></div>
+  </div>
+  <div style="padding:0 16px 8px;flex-shrink:0">
+    <div class="log-filters" id="log-filters">
+      <div class="filter-chip on" onclick="filterLog('all',this)">All</div>
+      <div class="filter-chip" onclick="filterLog('income',this)">Income</div>
+      <div class="filter-chip" onclick="filterLog('expense',this)">Expense</div>
+      <div class="filter-chip" onclick="filterLog('School',this)">School</div>
+      <div class="filter-chip" onclick="filterLog('Studio',this)">Studio</div>
+      <div class="filter-chip" onclick="filterLog('Events',this)">Events</div>
+      <div class="filter-chip" onclick="filterLog('General Expense',this)">General</div>
+      <div class="filter-chip" onclick="filterLog('draw',this)">Owner Draws</div>
+    </div>
+  </div>
+  <div class="scroll" style="padding-top:0" id="log-list">
+    <div style="background:var(--card);border-radius:12px;padding:20px;text-align:center;font-size:11px;color:var(--text3)">Wala pang entries</div>
+  </div>
+  <div class="bnav">
+    <button class="ni" onclick="switchNav(this,'screen-home',0)"><span class="ni-icon">⌂</span><span class="ni-lbl">Home</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-school',1)"><span class="ni-icon">🏫</span><span class="ni-lbl">School</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-studio',2)"><span class="ni-icon">🎬</span><span class="ni-lbl">Studio</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-events',3)"><span class="ni-icon">📷</span><span class="ni-lbl">Events</span><div class="ni-dot"></div></button>
+    <button class="ni on" onclick="switchNav(this,'screen-log',4)"><span class="ni-icon">📋</span><span class="ni-lbl">Log</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-statement',5)"><span class="ni-icon">📊</span><span class="ni-lbl">Report</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-settings',6)"><span class="ni-icon">⚙</span><span class="ni-lbl">Settings</span><div class="ni-dot"></div></button>
+  </div>
+</div>
+
+<!-- STATEMENT -->
+<div class="screen" id="screen-statement">
+  <div class="sb"></div>
+  <div class="list-hdr"><div><div class="lh-title">Report</div><div class="lh-sub">Statements & Records</div></div></div>
+
+  <!-- 3 tab pills -->
+  <div style="display:flex;gap:6px;padding:0 16px 10px;flex-shrink:0;overflow-x:auto">
+    <div class="filter-chip on" id="rtab-statement" onclick="switchReportTab('statement')">Financial</div>
+    <div class="filter-chip" id="rtab-owner" onclick="switchReportTab('owner')">Owner Statement</div>
+    <div class="filter-chip" id="rtab-loans" onclick="switchReportTab('loans')">Loan Records</div>
+  </div>
+
+  <div class="scroll" style="padding-top:0">
+
+    <!-- FINANCIAL STATEMENT -->
+    <div id="rsec-statement">
+      <div style="background:var(--card);border-radius:14px;overflow:hidden;margin-bottom:12px">
+        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);padding:12px 14px 8px">Business Line</div>
+        <div class="olist" style="padding:0 14px 12px">
+          <button class="obtn sel" id="stmt-line-all" onclick="setStmtLine('All',this)"><div class="oleft"><div class="oico">A</div><div><div class="olbl">All Business Lines</div></div></div><span class="ochk">✓</span></button>
+          <button class="obtn" id="stmt-line-school" onclick="setStmtLine('School',this)"><div class="oleft"><div class="oico">🏫</div><div><div class="olbl">School Partnership</div></div></div><span class="ochk">✓</span></button>
+          <button class="obtn" id="stmt-line-studio" onclick="setStmtLine('Studio',this)"><div class="oleft"><div class="oico">🎬</div><div><div class="olbl">Studio</div></div></div><span class="ochk">✓</span></button>
+          <button class="obtn" id="stmt-line-events" onclick="setStmtLine('Events',this)"><div class="oleft"><div class="oico">📷</div><div><div class="olbl">Events</div></div></div><span class="ochk">✓</span></button>
+        </div>
+      </div>
+      <div class="dp-row">
+        <div class="dp-wrap"><div class="dp-lbl">From</div><input class="dp-input" type="date" id="date-from" value="2025-09-01"></div>
+        <div class="dp-wrap"><div class="dp-lbl">To</div><input class="dp-input" type="date" id="date-to" value="2026-04-30"></div>
+      </div>
+      <button class="gen-btn" onclick="generateStatement()">Generate Statement →</button>
+      <div class="stmt-doc show" id="stmt-doc">
+        <div class="stmt-hd">
+          <div class="stmt-co">MOMENTA CINEMA</div>
+          <div class="stmt-dt" id="stmt-line-label">Financial Statement</div>
+          <div class="stmt-pd" id="stmt-period">Set date range above</div>
+        </div>
+        <div id="stmt-body">
+          <div style="padding:16px;text-align:center;font-size:11px;color:var(--text3)">Tap Generate to compute statement</div>
+        </div>
+      </div>
+    </div><!-- /rsec-statement -->
+
+    <!-- OWNER STATEMENT -->
+    <div id="rsec-owner" style="display:none">
+      <div style="background:var(--card);border-radius:14px;padding:16px;margin-bottom:12px">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:12px">Owner Statement</div>
+
+        <!-- 2 mode cards -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+          <div id="owner-mode-auto" onclick="setOwnerMode('auto')" style="background:var(--sage-glow);border:2px solid var(--sage);border-radius:12px;padding:14px;cursor:pointer;text-align:center">
+            <div style="font-size:20px;margin-bottom:5px">⚡</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--sage-b)">Auto Generate</div>
+            <div style="font-size:8px;color:var(--text3);margin-top:2px">50/25/25 split · computed net</div>
+          </div>
+          <div id="owner-mode-custom" onclick="setOwnerMode('custom')" style="background:var(--card2);border:2px solid var(--line);border-radius:12px;padding:14px;cursor:pointer;text-align:center">
+            <div style="font-size:20px;margin-bottom:5px">✏️</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--text)">Custom</div>
+            <div style="font-size:8px;color:var(--text3);margin-top:2px">Override net income & split %</div>
+          </div>
+        </div>
+
+        <!-- Date range — always visible -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+          <div class="dp-wrap"><div class="dp-lbl">From</div><input class="dp-input" type="date" id="owner-from"></div>
+          <div class="dp-wrap"><div class="dp-lbl">To</div><input class="dp-input" type="date" id="owner-to"></div>
+        </div>
+
+        <!-- Custom inputs — hidden by default, shown when custom mode -->
+        <div id="owner-custom-inputs" style="display:none">
+          <div style="background:var(--card2);border-radius:10px;padding:12px 14px;margin-bottom:10px;border:1px solid var(--line)">
+            <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:6px">Net Income Override</div>
+            <div style="display:flex;align-items:center;gap:6px">
+              <span style="font-family:'Barlow Condensed',sans-serif;font-size:20px;color:var(--text3)">₱</span>
+              <input id="owner-net-income" type="number" inputmode="decimal" placeholder="Leave blank to auto-compute" style="flex:1;background:none;border:none;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--text);outline:none">
+            </div>
+          </div>
+          <div style="background:var(--card2);border-radius:10px;padding:12px 14px;margin-bottom:10px;border:1px solid var(--line)">
+            <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:8px">Split Ratio</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+              <div>
+                <div style="font-size:8px;color:var(--text3);margin-bottom:4px">General Fund %</div>
+                <input id="split-general-pct" type="number" placeholder="50" style="width:100%;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:7px 8px;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--text);outline:none">
+              </div>
+              <div>
+                <div style="font-size:8px;color:var(--text3);margin-bottom:4px">Almira %</div>
+                <input id="split-almira-pct" type="number" placeholder="25" style="width:100%;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:7px 8px;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--text);outline:none">
+              </div>
+              <div>
+                <div style="font-size:8px;color:var(--text3);margin-bottom:4px">Joyce %</div>
+                <input id="split-joyce-pct" type="number" placeholder="25" style="width:100%;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:7px 8px;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--text);outline:none">
+              </div>
+            </div>
+            <div style="font-size:9px;color:var(--text3);margin-top:6px">Default: 50 · 25 · 25</div>
+          </div>
+        </div>
+
+        <button onclick="generateOwnerStatement()" style="width:100%;padding:13px;background:var(--sage);border:none;border-radius:10px;color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;cursor:pointer;margin-bottom:14px">Generate →</button>
+        <div id="owner-stmt-content"></div>
+      </div>
+    </div><!-- /rsec-owner -->
+
+        <!-- LOAN RECORDS -->
+    <div id="rsec-loans" style="display:none">
+      <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:8px;padding:0 2px">Settled Loan History</div>
+      <div id="loan-records-list"></div>
+    </div><!-- /rsec-loans -->
+
+  </div>
+  <div class="bnav">
+    <button class="ni" onclick="switchNav(this,'screen-home',0)"><span class="ni-icon">⌂</span><span class="ni-lbl">Home</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-school',1)"><span class="ni-icon">🏫</span><span class="ni-lbl">School</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-studio',2)"><span class="ni-icon">🎬</span><span class="ni-lbl">Studio</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-events',3)"><span class="ni-icon">📷</span><span class="ni-lbl">Events</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-log',4)"><span class="ni-icon">📋</span><span class="ni-lbl">Log</span><div class="ni-dot"></div></button>
+    <button class="ni on" onclick="switchNav(this,'screen-statement',5)"><span class="ni-icon">📊</span><span class="ni-lbl">Report</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-settings',6)"><span class="ni-icon">⚙</span><span class="ni-lbl">Settings</span><div class="ni-dot"></div></button>
+  </div>
+</div>
+
+
+<!-- ENTRY MODAL (bottom sheet) -->
+<div class="entry-overlay" id="entry-overlay" onclid="screen-settings">
+  <div class="sb"></div>
+  <div class="list-hdr"><div><div class="lh-title">Settings</div><div class="lh-sub">Configuration & Starting Balances</div></div></div>
+  <div class="scroll" style="padding-top:0">
+
+    <!-- ACCOUNT BALANCES -->
+    <div class="set-sec">
+      <div class="set-sec-title">Account Balances</div>
+      <div class="set-row"><div class="set-lbl">BDO Business</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-bdo" type="number" placeholder="0" onchange="saveBalance('bdo',this.value)"></div></div>
+      <div class="set-row"><div class="set-lbl">GCash Almira</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-gcash-a" type="number" placeholder="0" onchange="saveBalance('gcashA',this.value)"></div></div>
+      <div class="set-row"><div class="set-lbl">GCash Joyce</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-gcash-j" type="number" placeholder="0" onchange="saveBalance('gcashJ',this.value)"></div></div>
+      <div class="set-row"><div class="set-lbl">Cash on Hand</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-cash" type="number" placeholder="0" onchange="saveBalance('cash',this.value)"></div></div>
+      <div class="set-row"><div class="set-lbl">Studio Cash Box</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-cashbox" type="number" placeholder="0" onchange="saveBalance('cashbox',this.value)"></div></div>
+    </div>
+
+    <!-- POOL STARTING BALANCES -->
+    <div class="set-sec">
+      <div class="set-sec-title">Pool Starting Balances</div>
+      <div style="font-size:9px;color:var(--text3);margin-bottom:10px;line-height:1.6">I-set ang starting balance ng bawat business line para accurate ang standing computation.</div>
+      <div class="set-sub-title">School Partnership</div>
+      <div class="set-row"><div class="set-lbl">Total Income (historical)</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-school-income" type="number" placeholder="0" onchange="savePoolStart('school','income',this.value)"></div></div>
+      <div class="set-row"><div class="set-lbl">Total Expense (historical)</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-school-expense" type="number" placeholder="0" onchange="savePoolStart('school','expense',this.value)"></div></div>
+      <div class="set-sub-title" style="margin-top:10px">Studio</div>
+      <div class="set-row"><div class="set-lbl">Total Income (historical)</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-studio-income" type="number" placeholder="0" onchange="savePoolStart('studio','income',this.value)"></div></div>
+      <div class="set-row"><div class="set-lbl">Total Expense (historical)</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-studio-expense" type="number" placeholder="0" onchange="savePoolStart('studio','expense',this.value)"></div></div>
+      <div class="set-sub-title" style="margin-top:10px">Events</div>
+      <div class="set-row"><div class="set-lbl">Total Income (historical)</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-events-income" type="number" placeholder="0" onchange="savePoolStart('events','income',this.value)"></div></div>
+      <div class="set-row"><div class="set-lbl">Total Expense (historical)</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-events-expense" type="number" placeholder="0" onchange="savePoolStart('events','expense',this.value)"></div></div>
+      <div class="set-sub-title" style="margin-top:10px">General</div>
+      <div class="set-row"><div class="set-lbl">Total Income (historical)</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-general-income" type="number" placeholder="0" onchange="savePoolStart('general','income',this.value)"></div></div>
+      <div class="set-row"><div class="set-lbl">Total Expense (historical)</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-general-expense" type="number" placeholder="0" onchange="savePoolStart('general','expense',this.value)"></div></div>
+    </div>
+
+    <!-- STANDING OBLIGATIONS -->
+    <div class="set-sec">
+      <div class="set-sec-title">Standing Obligations</div>
+      <div class="set-sub-title">Business Loans</div>
+      <div class="set-row"><div class="set-lbl">Shara Loan (remaining)</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-shara" type="number" placeholder="550000" onchange="saveObligation('shara',this.value)"></div></div>
+      <div class="set-row"><div class="set-lbl">Business owes Almira</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-almira-owed" type="number" placeholder="321458" onchange="saveObligation('almiraOwed',this.value)"></div></div>
+      <div class="set-sub-title" style="margin-top:10px">Shared Expenses</div>
+      <div class="set-row"><div class="set-lbl">Total Shared (outstanding)</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-shared" type="number" placeholder="197262" onchange="saveObligation('shared',this.value)"></div></div>
+    </div>
+
+    <!-- PERSONAL OBLIGATIONS -->
+    <div class="set-sec">
+      <div class="set-sec-title">Personal Obligations</div>
+      <div class="set-sub-title">Joyce</div>
+      <div class="set-row"><div class="set-lbl">Joyce owes Business</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-joyce-biz" type="number" placeholder="175087" onchange="saveObligation('joyceBiz',this.value)"></div></div>
+      <div class="set-row"><div class="set-lbl">Joyce owes Almira (personal)</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-joyce-almira" type="number" placeholder="25600" onchange="saveObligation('joyceAlmira',this.value)"></div></div>
+      <div class="set-sub-title" style="margin-top:10px">Almira</div>
+      <div class="set-row"><div class="set-lbl">Almira total draws (net)</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-almira-draws" type="number" placeholder="0" onchange="saveObligation('almiraDraws',this.value)"></div></div>
+    </div>
+
+    <!-- NET INCOME OVERRIDE -->
+    <div class="set-sec">
+      <div class="set-sec-title">Owner Statement Default</div>
+      <div class="set-row"><div class="set-lbl">Net Income (override)</div><div class="set-val-wrap"><span class="set-peso">₱</span><input class="set-input" id="set-net-income" type="number" placeholder="Auto-computed" onchange="saveObligation('netIncome',this.value)"></div></div>
+      <div style="font-size:9px;color:var(--text3);margin-top:6px;line-height:1.6">Leave blank para auto-compute mula sa logged transactions.</div>
+    </div>
+
+    <!-- GOOGLE SHEET CONNECTION -->
+    <div class="set-sec">
+      <div class="set-sec-title">Google Sheet Connection</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <div id="sdot" style="width:8px;height:8px;border-radius:50%;background:var(--red)"></div>
+        <div id="sstat" style="font-size:11px;font-weight:600;color:var(--text3)">Not connected</div>
+      </div>
+      <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:6px">Paste Web App URL</div>
+      <textarea id="sheet-url-input" placeholder="https://script.google.com/macros/s/..." style="width:100%;background:var(--card2);border:1.5px solid var(--line);border-radius:10px;color:var(--text);font-size:11px;padding:10px 12px;outline:none;resize:none;height:70px;font-family:'Plus Jakarta Sans',sans-serif;line-height:1.5;margin-bottom:8px"></textarea>
+      <button onclick="connectSheetFromInput()" style="width:100%;padding:12px;background:var(--sage-glow);border:1.5px dashed var(--sage-dim);border-radius:10px;color:var(--sage-b);font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.5px;cursor:pointer">⚡ Connect Google Sheet</button>
+      <div id="sheet-status-msg" style="margin-top:8px;font-size:9px;color:var(--text3);line-height:1.7"></div>
+    </div>
+
+    <!-- CURRENT USER -->
+    <div class="set-sec">
+      <div class="set-sec-title">Current User</div>
+      <div class="set-row"><div class="set-lbl">Logged in as</div><div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--sage-b)" id="set-user-name">—</div></div>
+      <button onclick="switchUser()" style="width:100%;padding:11px;background:var(--card2);border:1px solid var(--line);border-radius:10px;color:var(--text2);font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px">Switch User</button>
+    </div>
+
+    <div style="height:20px"></div>
+  </div>
+  <div class="bnav">
+    <button class="ni" onclick="switchNav(this,'screen-home',0)"><span class="ni-icon">⌂</span><span class="ni-lbl">Home</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-school',1)"><span class="ni-icon">🏫</span><span class="ni-lbl">School</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-studio',2)"><span class="ni-icon">🎬</span><span class="ni-lbl">Studio</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-events',3)"><span class="ni-icon">📷</span><span class="ni-lbl">Events</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-log',4)"><span class="ni-icon">📋</span><span class="ni-lbl">Log</span><div class="ni-dot"></div></button>
+    <button class="ni" onclick="switchNav(this,'screen-statement',5)"><span class="ni-icon">📊</span><span class="ni-lbl">Report</span><div class="ni-dot"></div></button>
+    <button class="ni on" onclick="switchNav(this,'screen-settings',6)"><span class="ni-icon">⚙</span><span class="ni-lbl">Settings</span><div class="ni-dot"></div></button>
+  </div>
+</div>
+
+<div id="confirm-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:flex-end;justify-content:center;z-index:99999;backdrop-filter:blur(8px)">
+  <div style="width:100%;max-width:430px;background:#1a1c24;border-radius:20px 20px 0 0;padding:20px;padding-bottom:calc(20px + env(safe-area-inset-bottom,16px));animation:confirmFadeIn .25s ease">
+    <div style="width:36px;height:4px;background:rgba(255,255,255,0.15);border-radius:2px;margin:0 auto 16px"></div>
+    <div id="confirm-title" style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:#e8eaf0;margin-bottom:10px">Are you sure?</div>
+    <div id="confirm-msg" style="font-size:12px;color:#8a8ea8;line-height:1.7;white-space:pre-line;margin-bottom:20px"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <button id="confirm-no" style="padding:14px;background:none;border:1.5px solid rgba(255,255,255,0.1);border-radius:12px;color:#8a8ea8;font-size:13px;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif">Cancel</button>
+      <button id="confirm-yes" style="padding:14px;background:rgba(217,96,96,0.25);border:1.5px solid rgba(217,96,96,0.5);border-radius:12px;color:#d96060;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:.5px;cursor:pointer">DELETE</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Service Worker — only registers on HTTPS (GitHub Pages), not local files
+if('serviceWorker' in navigator && location.protocol === 'https:'){
+  const swCode = `
+    const CACHE_NAME = 'momenta-v2';
+    const urlsToCache = ['/'];
+
+    self.addEventListener('install', event => {
+      event.waitUntil(
+        caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
+      );
+      self.skipWaiting();
+    });
+
+    self.addEventListener('activate', event => {
+      event.waitUntil(
+        caches.keys().then(keys => Promise.all(
+          keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
+        ))
+      );
+      self.clients.claim();
+    });
+
+    self.addEventListener('fetch', event => {
+      event.respondWith(
+        caches.match(event.request).then(cached => {
+          if(cached) return cached;
+          return fetch(event.request).then(response => {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+            return response;
+          }).catch(() => cached);
+        })
+      );
+    });
+  `;
+  const blob = new Blob([swCode], {type: 'application/javascript'});
+  const swUrl = URL.createObjectURL(blob);
+  navigator.serviceWorker.register(swUrl)
+    .then(() => console.log('Momenta SW: online'))
+    .catch(e => console.log('SW skip:', e.message));
+}
+</script>
+</body>
+</html>
